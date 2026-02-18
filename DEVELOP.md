@@ -146,6 +146,7 @@ npm run format:check        # Prettier check (CI)
 
 # Assets
 npm run optimize:bg         # Regenerate background images (skips if up to date)
+npm run generate:banner     # Crop OG image into README banner (needs site build)
 npm run generate:favicons   # Generate favicon PNGs from SVG
 
 # Housekeeping

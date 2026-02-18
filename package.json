@@ -34,6 +34,7 @@
     "build:codex": "node scripts/build.js codex",
     "preview": "astro preview",
     "optimize:bg": "node scripts/optimize-bg.js",
+    "generate:banner": "node scripts/generate-banner.js",
     "generate:favicons": "node scripts/generate-favicons.js",
     "clean": "rm -rf dist",
     "lint": "npm run lint:md && npm run lint:js && npm run lint:types",
