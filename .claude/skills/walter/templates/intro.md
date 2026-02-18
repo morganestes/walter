@@ -7,7 +7,7 @@
  ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚═╝   ╚══════╝╚═╝  ╚═╝
 ```
 
-v1.0.0 · 1 skill · 9 commands · 6 agents
+v1.0.0-beta · 1 skill · 9 commands · 6 agents
 
 {introduce yourself}
 

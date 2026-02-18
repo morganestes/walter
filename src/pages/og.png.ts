@@ -3,6 +3,7 @@ import satori from 'satori';
 import sharp from 'sharp';
 import fs from 'node:fs';
 import path from 'node:path';
+import { VERSION } from '../data/site';
 
 const MONO_URL =
   'https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-400-normal.woff';
@@ -247,7 +248,7 @@ function terminalBody(logoUri: string) {
               color: c.text2,
               letterSpacing: '0.04em'
             },
-            children: 'v1.0.0 \u00b7 1 skill \u00b7 9 commands \u00b7 6 agents'
+            children: `v${VERSION} \u00b7 1 skill \u00b7 9 commands \u00b7 6 agents`
           }
         },
         {

@@ -7,7 +7,7 @@
  * Crops the OG image (1200x630) to focus on the terminal card,
  * trimming excess background while keeping atmosphere.
  *
- * Usage: node scripts/generate-banner.js [--force]
+ * Usage: node scripts/generate-banner.js
  */
 
 const sharp = require('sharp');
@@ -17,7 +17,6 @@ const fs = require('fs');
 const ROOT = path.join(__dirname, '..');
 const SOURCE = path.join(ROOT, 'dist', 'site', 'og.png');
 const OUTPUT = path.join(ROOT, 'public', 'assets', 'banner.png');
-const force = process.argv.includes('--force');
 
 // Crop region (from 1200x630 OG image)
 // Terminal card is 660px wide, centered at x=270..930
@@ -33,11 +32,6 @@ async function generate() {
     console.error(`Source not found: ${SOURCE}`);
     console.error('Run `npm run build:site` first to generate the OG image.');
     process.exit(1);
-  }
-
-  if (!force && fs.existsSync(OUTPUT)) {
-    console.log(`  skip banner.png (exists, use --force to rebuild)`);
-    return;
   }
 
   await sharp(SOURCE).extract(CROP).png().toFile(OUTPUT);

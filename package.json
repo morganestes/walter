@@ -1,6 +1,6 @@
 {
   "name": "walter",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "An engineering persona for AI agents. Adapts to your workflow, aims for 99.1% purity. No half measures.",
   "author": "Derek Herman <walter@derekherman.co>",
   "license": "Apache-2.0",
@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "dev": "astro dev",
-    "build": "npm run optimize:bg && npm run build:walter && npm run build:site",
+    "build": "npm run sync:version && npm run optimize:bg && npm run build:walter && npm run build:site && npm run generate:banner",
     "build:walter": "node scripts/build.js",
     "build:site": "astro build",
     "build:claude": "node scripts/build.js claude",
@@ -36,6 +36,7 @@
     "optimize:bg": "node scripts/optimize-bg.js",
     "generate:banner": "node scripts/generate-banner.js",
     "generate:favicons": "node scripts/generate-favicons.js",
+    "sync:version": "node scripts/sync-version.js",
     "clean": "rm -rf dist",
     "lint": "npm run lint:md && npm run lint:js && npm run lint:types",
     "lint:md": "markdownlint 'src/**/*.md' '*.md'",

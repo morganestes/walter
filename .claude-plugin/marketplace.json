@@ -12,7 +12,7 @@
     {
       "name": "walter",
       "description": "The engineering discipline AI agents are missing: 1 skill, 6 agents, 9 commands. No half measures.",
-      "version": "1.0.0",
+      "version": "1.0.0-beta",
       "author": {
         "name": "Derek Herman",
         "email": "walter@derekherman.co"
