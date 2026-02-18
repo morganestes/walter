@@ -1,6 +1,6 @@
-# Walter
-
 [![Banner Image](public/assets/banner.png)](https://walter.cooking)
+
+# Walter
 
 **No half measures**. 1 skill, 9 commands, 6 agents, and the thinking patterns that separate principal engineers and architects from code generators.
 
