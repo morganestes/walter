@@ -22,7 +22,7 @@ npm run clean           # Remove dist/
 
 ## Status
 
-- 1 skill, 9 commands, 6 agents, 12 references — all functional
+- 1 skill, 9 commands, 6 agents, 12 references — all functional, `.walter/` persistence integrated
 - Build system: 4 providers, unified transforms, validation, placeholders, conditionals, auto-copy, ZIPs
 - Site: Astro, OG image, SEO meta, sitemap, favicons, 404
 - Plugin: marketplace.json + plugin.json ready
@@ -40,6 +40,7 @@ npm run clean           # Remove dist/
 Content audit, frontmatter descriptions, Heisenberg evolution.
 
 ### Remaining Before Release
+
 - **Content audit** — Walk every skill, command, agent, reference for tone, accuracy, completeness
 - **Frontmatter descriptions** — Audit all command and agent descriptions for clarity. These are what users and agents see first — clear and accurate, not gimmicky
 - **Heisenberg evolution** — Make write-capable, expand agent definition. Walter's subconscious — same thinking and discipline, can do real work (not just read-only advisory). Deep systems thinking + execution
