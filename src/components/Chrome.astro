@@ -1,0 +1,116 @@
+---
+interface Props {
+  path?: string;
+}
+
+const { path = '~/walter' } = Astro.props;
+---
+
+<div class="titlebar">
+  <span class="dot dot--close" aria-hidden="true"></span>
+  <span class="dot dot--minimize" aria-hidden="true"></span>
+  <span class="dot dot--maximize" aria-hidden="true"></span>
+  <span class="path" aria-hidden="true">{path}</span>
+  <button class="theme-toggle" aria-label="Toggle theme">
+    <svg
+      class="theme-icon theme-icon--sun"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+    <svg
+      class="theme-icon theme-icon--moon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+  </button>
+</div>
+
+<style>
+  .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px var(--space-4);
+    border-bottom: 1px solid var(--border-1);
+    background: var(--bg-elevated);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  .dot--close {
+    background: var(--error);
+  }
+  .dot--minimize {
+    background: var(--accent);
+  }
+  .dot--maximize {
+    background: var(--success);
+  }
+
+  .path {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-left: var(--space-2);
+  }
+
+  .theme-toggle {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-3);
+    padding: 2px;
+    border-radius: var(--radius-sm);
+    transition: color var(--duration-fast) ease;
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent);
+  }
+
+  .theme-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  :global([data-theme='dark']) .theme-icon--sun {
+    display: block;
+  }
+  :global([data-theme='dark']) .theme-icon--moon {
+    display: none;
+  }
+  :global([data-theme='light']) .theme-icon--sun {
+    display: none;
+  }
+  :global([data-theme='light']) .theme-icon--moon {
+    display: block;
+  }
+</style>

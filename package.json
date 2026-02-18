@@ -1,0 +1,75 @@
+{
+  "name": "walter",
+  "version": "1.0.0",
+  "description": "An engineering persona for AI agents. Adapts to your workflow, aims for 99.1% purity. No half measures.",
+  "author": "Derek Herman <derek@walter.cooking>",
+  "license": "Apache-2.0",
+  "homepage": "https://walter.cooking",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/derekherman/walter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/derekherman/walter/issues"
+  },
+  "keywords": [
+    "claude",
+    "cursor",
+    "gemini",
+    "codex",
+    "ai",
+    "agent",
+    "skill",
+    "engineering",
+    "persona"
+  ],
+  "scripts": {
+    "dev": "astro dev",
+    "build": "npm run optimize:bg && npm run build:walter && npm run build:site",
+    "build:walter": "node scripts/build.js",
+    "build:site": "astro build",
+    "build:claude": "node scripts/build.js claude",
+    "build:cursor": "node scripts/build.js cursor",
+    "build:gemini": "node scripts/build.js gemini",
+    "build:codex": "node scripts/build.js codex",
+    "preview": "astro preview",
+    "optimize:bg": "node scripts/optimize-bg.js",
+    "generate:favicons": "node scripts/generate-favicons.js",
+    "clean": "rm -rf dist",
+    "lint": "npm run lint:md && npm run lint:js && npm run lint:types",
+    "lint:md": "markdownlint 'src/**/*.md' '*.md'",
+    "lint:js": "eslint scripts/ src/",
+    "lint:types": "astro check",
+    "format": "prettier --write 'scripts/**/*.js' 'src/**/*.{ts,astro}'",
+    "format:check": "prettier --check 'scripts/**/*.js' 'src/**/*.{ts,astro}'",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "scripts/**/*.js": [
+      "eslint --fix"
+    ],
+    "src/**/*.{ts,astro}": [
+      "eslint --fix"
+    ],
+    "*.{js,ts,astro,css,json}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/sitemap": "^3.7.0",
+    "astro": "^5.7.13",
+    "culori": "^4.0.2",
+    "eslint": "^9.39.2",
+    "eslint-plugin-astro": "^1.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "markdownlint-cli": "^0.47.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "satori": "^0.19.2",
+    "sharp": "^0.34.5",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.56.0"
+  }
+}

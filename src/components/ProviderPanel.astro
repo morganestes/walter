@@ -1,0 +1,253 @@
+---
+import type { Provider } from '../data/providers';
+
+interface Props {
+  provider: Provider;
+}
+
+const { provider: p } = Astro.props;
+const hasTabs = p.methods.length > 1;
+---
+
+<div class="provider-info" data-provider={p.id}>
+  <span class="provider-name">{p.name}</span>
+
+  {
+    hasTabs && (
+      <div class="method-pills">
+        {p.methods.map((m, i) => (
+          <button type="button" class:list={['method-pill', { active: i === 0 }]} data-method={i}>
+            {m.name}
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    p.methods.map((m, i) => (
+      <div class:list={['method-content', { active: i === 0 }]} data-method-content={i}>
+        {m.command && (
+          <div class="provider-command">
+            <code class="command-text">{m.command}</code>
+            <button
+              type="button"
+              class="copy-btn"
+              data-command={m.command}
+              aria-label={`Copy ${p.name} install command`}
+            >
+              Copy
+            </button>
+          </div>
+        )}
+        {!m.command && (
+          <a href={`/assets/downloads/walter-${p.id}.zip`} class="provider-download" download>
+            Download for {p.name}
+          </a>
+        )}
+        <ol class="provider-steps">
+          {m.steps.map((step) => (
+            <li set:html={step} />
+          ))}
+        </ol>
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  // Method pill switching
+  document.querySelectorAll('.method-pills').forEach((pills) => {
+    pills.addEventListener('click', (e) => {
+      const pill = (e.target as HTMLElement).closest('.method-pill') as HTMLButtonElement | null;
+      if (!pill) return;
+
+      const idx = pill.dataset.method;
+      const panel = pills.closest('.provider-info');
+      if (!panel || !idx) return;
+
+      panel.querySelectorAll('.method-pill').forEach((p) => p.classList.remove('active'));
+      panel.querySelectorAll('.method-content').forEach((c) => c.classList.remove('active'));
+
+      pill.classList.add('active');
+      panel.querySelector(`.method-content[data-method-content="${idx}"]`)?.classList.add('active');
+    });
+  });
+
+  // Copy button
+  document.querySelectorAll('.copy-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const command = (btn as HTMLButtonElement).dataset.command;
+      if (!command) return;
+      navigator.clipboard
+        .writeText(command)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+          }, 2000);
+        })
+        .catch(() => {
+          btn.textContent = 'Failed';
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+          }, 2000);
+        });
+    });
+  });
+</script>
+
+<style>
+  .provider-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .provider-name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-1);
+  }
+
+  /* ── Method Pills ── */
+  .method-pills {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  .method-pill {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border: 1px solid var(--border-1);
+    border-radius: var(--radius-full);
+    background: none;
+    color: var(--text-3);
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease,
+      background var(--duration-fast) ease;
+  }
+
+  .method-pill:hover {
+    color: var(--text-2);
+    border-color: var(--border-2);
+  }
+
+  .method-pill.active {
+    color: var(--bg-page);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ── Method Content ── */
+  .method-content {
+    display: none;
+  }
+
+  .method-content.active {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* ── Command ── */
+  .provider-command {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-1);
+    border-radius: var(--radius-sm);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .command-text {
+    font-size: var(--text-xs);
+    color: var(--accent);
+    background: none;
+    padding: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .copy-btn {
+    padding: 2px 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-3);
+    background: var(--border-1);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition:
+      background var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+
+  .copy-btn:hover {
+    background: var(--accent);
+    color: var(--bg-page);
+  }
+
+  /* ── Download ── */
+  .provider-download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--bg-page);
+    background: var(--accent);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: opacity var(--duration-fast) ease;
+  }
+
+  .provider-download:hover {
+    opacity: 0.85;
+    color: var(--bg-page);
+  }
+
+  /* ── Steps ── */
+  .provider-steps {
+    list-style: none;
+    padding-left: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .provider-steps li {
+    font-size: var(--text-xs);
+    color: var(--text-2);
+    line-height: var(--leading-relaxed);
+    padding-left: var(--space-2);
+    position: relative;
+  }
+
+  .provider-steps li::before {
+    content: '├─';
+    position: absolute;
+    right: 100%;
+    color: var(--text-3);
+  }
+
+  .provider-steps li:last-child::before {
+    content: '└─';
+  }
+
+  .provider-steps :global(code) {
+    font-size: 0.7rem;
+    padding: 1px 4px;
+    background: var(--bg-elevated);
+    border-radius: 2px;
+    color: var(--accent);
+  }
+</style>

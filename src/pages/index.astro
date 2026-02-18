@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import Background from '../components/Background.astro';
+import Terminal from '../components/Terminal.astro';
+import Tabs from '../components/Tabs.astro';
+import Credits from '../components/Credits.astro';
+import { providers } from '../data/providers';
+---
+
+<Base>
+  <div class="landing">
+    <Background />
+    <Terminal>
+      <p class="landing-tagline">
+        Hi, I'm Walter. I give your preferred AI coding harness engineering discipline, not just
+        code generation.
+      </p>
+      <p class="landing-intro">
+        Install me and your agent learns to scope the problem, break it down, build incrementally,
+        verify against intent, and adapt to changes. <em class="landing-em">No half measures.</em>
+      </p>
+      <Tabs providers={providers} />
+    </Terminal>
+    <Credits />
+  </div>
+</Base>
+
+<style>
+  .landing {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .landing-tagline {
+    color: var(--text-1);
+    margin-top: var(--space-4);
+  }
+
+  .landing-intro {
+    color: var(--text-2);
+    margin-top: var(--space-3);
+    line-height: var(--leading-relaxed);
+  }
+
+  .landing-em {
+    color: var(--accent-alt);
+  }
+
+  @media (max-width: 600px) {
+    .landing {
+      min-height: 100svh;
+      justify-content: flex-start;
+    }
+  }
+</style>

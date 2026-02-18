@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Generated
+.astro/
+dist/
+
+# Deprecated
+.deprecated/
+
+# OS
+**/.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local settings
+.claude/settings*.json
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Built assets
+public/assets/bg/
+public/assets/downloads/

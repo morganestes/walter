@@ -1,0 +1,61 @@
+---
+import Chrome from './Chrome.astro';
+import Logo from './Logo.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  path?: string;
+}
+
+const { path = '~/walter' } = Astro.props;
+---
+
+<div class="terminal">
+  <Chrome path={path} />
+  <div class="terminal-body">
+    <h1 class="terminal-logo">
+      <Logo />
+      <span class="sr-only">Walter</span>
+    </h1>
+    <p class="terminal-meta">v1.0.0 &middot; 1 skill &middot; 9 commands &middot; 6 agents</p>
+    <slot />
+  </div>
+  <Footer />
+</div>
+
+<style>
+  .terminal {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    text-align: left;
+    width: 100%;
+    max-width: 580px;
+    background: var(--bg-surface);
+    border: 1px solid oklch(0.38 0.008 70);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 6px 8px 0 oklch(0 0 0 / 0.75);
+  }
+
+  :global([data-theme='light']) .terminal {
+    border-color: oklch(0.62 0.01 70);
+    box-shadow: 6px 8px 0 oklch(0.25 0.01 70 / 0.25);
+  }
+
+  .terminal-body {
+    padding: var(--space-6);
+  }
+
+  .terminal-logo {
+    all: unset;
+    display: block;
+    margin-bottom: 0.5em;
+  }
+
+  .terminal-meta {
+    color: var(--text-2);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+  }
+</style>

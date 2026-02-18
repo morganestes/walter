@@ -1,0 +1,129 @@
+/* ==============================================
+   DESIGN TOKENS — Walter Marketing Website
+   Desert chemistry palette. OKLCH throughout.
+   ============================================== */
+
+:root {
+  /* --- Fonts --- */
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* --- Type Scale (perfect fourth — 1.333) --- */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.333rem;
+  --text-xl: 2.369rem;
+  --text-2xl: clamp(2.5rem, 5vw, 4rem);
+
+  /* --- Line Heights --- */
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  /* --- Letter Spacing --- */
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+
+  /* --- Spacing (4pt base) --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  /* Semantic aliases */
+  --space-xs: var(--space-1);
+  --space-sm: var(--space-2);
+  --space-md: var(--space-4);
+  --space-lg: var(--space-6);
+  --space-xl: var(--space-8);
+  --space-2xl: var(--space-12);
+  --space-3xl: var(--space-16);
+
+  /* --- Border Radius --- */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-full: 9999px;
+
+  /* --- Z-Index Scale --- */
+  --z-base: 0;
+  --z-cell-hover: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal-backdrop: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  /* --- Transitions --- */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-expand: 350ms;
+
+  /* --- Dark Mode (default) --- */
+
+  /* Backgrounds — warm near-black */
+  --bg-page: oklch(0.1 0.008 70);
+  --bg-surface: oklch(0.14 0.006 70);
+  --bg-elevated: oklch(0.18 0.008 70);
+  --bg-code: oklch(0.08 0.006 70);
+
+  /* Text — warm off-white */
+  --text-1: oklch(0.9 0.01 70);
+  --text-2: oklch(0.6 0.008 70);
+  --text-3: oklch(0.42 0.006 70);
+
+  /* Borders */
+  --border-1: oklch(0.22 0.006 70);
+  --border-2: oklch(0.3 0.008 70);
+
+  /* Accent — Hazmat Amber */
+  --accent: oklch(0.78 0.16 85);
+  --accent-muted: oklch(0.6 0.1 85);
+
+  /* Accent Alt — Crystal Blue */
+  --accent-alt: oklch(0.72 0.12 230);
+
+  /* Logo */
+  --logo: oklch(0.9 0.01 70);
+
+  /* Semantic */
+  --success: oklch(0.68 0.14 150);
+  --error: oklch(0.65 0.18 25);
+  --warning: oklch(0.8 0.16 85);
+}
+
+/* --- Light Mode --- */
+[data-theme='light'] {
+  --bg-page: oklch(0.96 0.005 70);
+  --bg-surface: oklch(0.98 0.003 70);
+  --bg-elevated: oklch(0.94 0.006 70);
+  --bg-code: oklch(0.93 0.005 70);
+
+  --text-1: oklch(0.15 0.01 70);
+  --text-2: oklch(0.4 0.008 70);
+  --text-3: oklch(0.58 0.005 70);
+
+  --border-1: oklch(0.86 0.005 70);
+  --border-2: oklch(0.78 0.008 70);
+
+  --accent: oklch(0.55 0.16 85);
+  --accent-muted: oklch(0.45 0.1 85);
+
+  --accent-alt: oklch(0.45 0.14 230);
+
+  --logo: oklch(0.15 0.01 70);
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "walter",
+  "metadata": {
+    "description": "The engineering discipline AI agents are missing: 1 skill, 6 agents, 9 commands. No half measures."
+  },
+  "owner": {
+    "name": "Derek Herman",
+    "email": "derek@walter.cooking"
+  },
+  "plugins": [
+    {
+      "name": "walter",
+      "description": "The engineering discipline AI agents are missing: 1 skill, 6 agents, 9 commands. No half measures.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Derek Herman",
+        "email": "derek@walter.cooking"
+      },
+      "source": "./.claude",
+      "category": "development",
+      "homepage": "https://walter.cooking",
+      "repository": "https://github.com/derekherman/walter",
+      "tags": [
+        "engineering",
+        "discipline",
+        "methodology",
+        "skills",
+        "commands",
+        "principal-engineer",
+        "architect"
+      ]
+    }
+  ]
+}

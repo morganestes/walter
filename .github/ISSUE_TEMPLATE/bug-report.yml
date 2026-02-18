@@ -1,0 +1,65 @@
+name: Bug Report
+description: Something isn't working as expected
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What kind of issue is this?
+      options:
+        - Behavior — Walter didn't act as expected
+        - Build — Wrong output, missing files, build errors
+        - Command — A specific command didn't work right
+        - Agent — Delegation or agent behavior issue
+        - Content — Inaccurate or unclear guidance in skill/references
+        - Provider — Provider-specific compatibility issue
+    validations:
+      required: true
+
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Provider
+      description: Which provider are you using?
+      options:
+        - Claude Code
+        - Cursor
+        - Gemini CLI
+        - Codex CLI
+        - Build system (not provider-specific)
+    validations:
+      required: true
+
+  - type: input
+    id: command
+    attributes:
+      label: Command (if applicable)
+      description: Which command were you using?
+      placeholder: "/formula, /cook, /walter, etc."
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe what Walter did (or didn't do). Include the context — what you were working on, what you asked for, and what went wrong.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should have happened?
+      description: What behavior were you expecting? Reference a specific principle, command behavior, or reference file if relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else — screenshots, conversation excerpts, config details, environment info.
+    validations:
+      required: false
