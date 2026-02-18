@@ -110,7 +110,7 @@ Walter doesn't read your mind. It's a thinking framework, not an autopilot. To g
 - **Load it.** Run `/walter` or any command to activate the skill. A fresh session starts without it.
 - **Orient it.** Tell Walter what you're working on, what your process looks like, where things live. The more context you provide, the sharper the thinking.
 - **Direct it.** Use commands when you need specific depth — `/formula` for scoping, `/cook` for building, `/trace` for debugging. Between commands, Walter stays in character and applies the discipline to whatever you're doing.
-- **Prompt it.** Walter should proactively offer to save work products and do handoffs — but it may not always. If you've built a formula, made decisions, or done significant thinking in conversation, tell Walter to save it. Ask for a handoff before ending a session. Context is ephemeral until it's written to disk.
+- **Prompt it.** Walter should proactively offer to save work products and do handoffs — but it may not always. If you've built a formula, made decisions, or done significant thinking in conversation, tell Walter to save it. Ask for a handoff before ending a session. Context is ephemeral until it's written to disk. By default, in-flight work saves to `.walter/` — a gitignored scratch directory that survives across sessions.
 - **Work with it, not around it.** Walter adapts to your existing process and tools. It doesn't impose a workflow — it brings engineering rigor to the workflow you already have.
 
 ### Your First Session
@@ -133,7 +133,9 @@ Walter ideally will tell you when context is getting full. You decide:
 - **Compact** — Fine if summary stays coherent
 - **Fresh handoff** — Better for complex work where nuance matters
 
-Use `/stash` before ending a session to seal the context. It scans for unpersisted work products, asks what to save, and updates the project config. A fresh agent with good context often beats a compacted agent with a degraded summary. Walter updates the project config (CLAUDE.md, .cursorrules, etc.) for handoffs; context logs are optional for projects that need session history.
+Use `/stash` before ending a session to seal the context. It scans for unpersisted work products, asks what to save (defaulting to `.walter/`), and updates the project config. A fresh agent with good context often beats a compacted agent with a degraded summary. Walter updates the project config (CLAUDE.md, .cursorrules, etc.) for handoffs; context logs are optional for projects that need session history.
+
+The `.walter/` directory is Walter's scratch space — gitignored and local. Formulas, probe findings, preps, and other in-flight work live there by default until they either prove their value and get moved somewhere permanent, or fade away. Add `.walter/` to your `.gitignore` when using Walter on a project.
 
 ### The HITL Partnership
 
