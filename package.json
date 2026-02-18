@@ -51,6 +51,12 @@
     "src/**/*.{ts,astro}": [
       "eslint --fix"
     ],
+    "*.md": [
+      "markdownlint"
+    ],
+    "src/**/*.md": [
+      "markdownlint"
+    ],
     "*.{js,ts,astro,css,json}": [
       "prettier --write"
     ]

@@ -194,9 +194,9 @@ Then run `/plugin install walter@walter` or browse available plugins via `/plugi
 
 ```JSON
 {
-	"env": {
-		"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-	}
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
 }
 ```
 

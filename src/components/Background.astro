@@ -87,16 +87,37 @@
     const pic = document.querySelector('picture.bg');
     if (!pic) return;
 
-    pic.querySelectorAll('source').forEach((source) => {
-      const url = source.dataset[theme];
-      if (url) source.srcset = url;
-    });
-
     const img = pic.querySelector('img') as HTMLImageElement;
-    if (img) {
-      const url = img.dataset[theme];
-      if (url) img.src = url;
+    if (!img) return;
+
+    const targetUrl = img.dataset[theme];
+    if (!targetUrl || img.src === targetUrl) return;
+
+    // Find the source URL the browser will likely use (first matching media query)
+    let preloadUrl = targetUrl;
+    for (const source of pic.querySelectorAll('source')) {
+      const media = source.getAttribute('media');
+      if (media && !window.matchMedia(media).matches) continue;
+      const url = (source as HTMLSourceElement).dataset[theme];
+      if (url) {
+        preloadUrl = url;
+        break;
+      }
     }
+
+    // Preload the target image, then swap all sources at once
+    const swap = () => {
+      pic.querySelectorAll('source').forEach((source) => {
+        const url = source.dataset[theme];
+        if (url) source.srcset = url;
+      });
+      img.src = targetUrl;
+    };
+
+    const preloader = new Image();
+    preloader.onload = swap;
+    preloader.onerror = swap;
+    preloader.src = preloadUrl;
   }
 
   updateTheme();

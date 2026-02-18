@@ -47,6 +47,12 @@ const {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={new URL('/og.png', Astro.site)} />
 
+    <!-- Prefetch alternate theme backgrounds -->
+    <link rel="prefetch" href="/assets/bg/desert-light.webp" as="image" />
+    <link rel="prefetch" href="/assets/bg/desert-light-mobile.webp" as="image" />
+    <link rel="prefetch" href="/assets/bg/desert-light.jpg" as="image" />
+    <link rel="prefetch" href="/assets/bg/desert-light-mobile.jpg" as="image" />
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
