@@ -13,28 +13,10 @@
  * @module config
  */
 
-/**
- * @typedef {Object} ProviderConfig
- * @property {string} name - Human-readable provider name
- * @property {string} commandsDir - Directory for commands output
- * @property {string} commandExt - File extension for commands
- * @property {string} skillsDir - Directory for skills output
- * @property {boolean} commandFrontmatter - Whether commands keep frontmatter
- * @property {boolean} skillFrontmatter - Whether skills keep frontmatter
- * @property {string[]} [frontmatterFields] - Whitelist of allowed frontmatter fields (if set, others are stripped)
- * @property {string|null} [agentsDir] - Directory for agents output (null if provider doesn't support agents)
- * @property {string[]} [agentFrontmatterFields] - Whitelist of allowed agent frontmatter fields
- * @property {Object<string, string>} placeholders - Map of placeholder to replacement value
- * @property {function(string): string} processArgs - Transform argument references
- */
-
-/**
- * Provider-specific configurations
- * @type {Object<string, ProviderConfig>}
- */
 const fs = require('fs');
 const path = require('path');
 const pkg = require('../../package.json');
+const { toYAML } = require('./format');
 
 // Count agents from source
 const agentsSrcDir = path.join(__dirname, '../../src/agents');
@@ -43,20 +25,70 @@ const agentCount = fs.existsSync(agentsSrcDir)
   : 0;
 const agentsStat = agentCount > 0 ? ` · ${agentCount} agents` : '';
 
+// -----------------------------------------------------------------------------
+// Output Formatters
+// -----------------------------------------------------------------------------
+
+/**
+ * Default output formatter — YAML frontmatter + markdown body.
+ * When frontmatter is null (stripped by fields config), returns body only.
+ *
+ * @param {Object|null} frontmatter - Filtered frontmatter (null = no frontmatter)
+ * @param {string} body - Markdown body
+ * @returns {string}
+ */
+function defaultFormat(frontmatter, body) {
+  if (!frontmatter) return body;
+  return `---\n${toYAML(frontmatter)}\n---\n${body}`;
+}
+
+/**
+ * Gemini command formatter — TOML with description and prompt.
+ *
+ * @param {Object|null} frontmatter - Filtered frontmatter
+ * @param {string} body - Command body
+ * @returns {string}
+ */
+function geminiCommandFormat(frontmatter, body) {
+  const description = frontmatter?.description || '';
+  const prompt = body.trim().replace(/"/g, '\\"');
+  return `description = "${description}"\nprompt = """\n${prompt}\n"""`;
+}
+
+// -----------------------------------------------------------------------------
+// Provider Configurations
+// -----------------------------------------------------------------------------
+
+/**
+ * @typedef {Object} ProviderConfig
+ * @property {string} name - Human-readable provider name
+ * @property {string} commandsDir - Directory for commands output
+ * @property {string} commandExt - File extension for commands
+ * @property {string} skillsDir - Directory for skills output
+ * @property {string|null} [agentsDir] - Directory for agents output (null if unsupported)
+ * @property {Object<string, string[]|null|false>} fields - Per-content-type frontmatter field whitelist.
+ *   string[] = keep only these fields, null = pass all through, false = strip frontmatter entirely.
+ * @property {function(Object|null, string, string): string} formatOutput - Produce final file content
+ *   from filtered frontmatter, body, and content type.
+ * @property {Object<string, string>} placeholders - Map of placeholder to replacement value
+ * @property {function(string): string} processArgs - Transform argument references
+ */
+
 const providers = {
   claude: {
     name: 'Claude',
-    // .claude/commands/{name}.md
     commandsDir: '.claude/commands',
     commandExt: '.md',
-    // .claude/skills/{name}/SKILL.md + references/
     skillsDir: '.claude/skills',
-    commandFrontmatter: true,
-    skillFrontmatter: true,
-    frontmatterFields: ['name', 'description', 'argument-hint'],
-    // .claude/agents/{name}.md
     agentsDir: '.claude/agents',
-    agentFrontmatterFields: ['name', 'description', 'tools', 'model'],
+
+    fields: {
+      command: ['name', 'description', 'argument-hint'],
+      agent: ['name', 'description', 'tools', 'model'],
+      skill: null
+    },
+
+    formatOutput: defaultFormat,
 
     placeholders: {
       '{{ask_instruction}}': 'STOP and use the AskUserQuestion tool to ask',
@@ -65,19 +97,21 @@ const providers = {
       '{{agents_stat}}': agentsStat
     },
 
-    // Claude Code uses $ARGUMENTS natively — keep as-is
     processArgs: (content) => content
   },
 
   cursor: {
     name: 'Cursor',
-    // .cursor/commands/{name}.md (body only, no frontmatter)
     commandsDir: '.cursor/commands',
     commandExt: '.md',
-    // .cursor/skills/{name}/SKILL.md
     skillsDir: '.cursor/skills',
-    commandFrontmatter: false,
-    skillFrontmatter: true,
+
+    fields: {
+      command: false,
+      skill: null
+    },
+
+    formatOutput: defaultFormat,
 
     placeholders: {
       '{{ask_instruction}}': 'Ask the user directly:',
@@ -86,23 +120,28 @@ const providers = {
       '{{agents_stat}}': ''
     },
 
-    // Cursor doesn't support $ARGUMENTS — strip references
-    // (Cursor appends user text to end of prompt automatically)
     processArgs: (content) => content.replace(/^\$ARGUMENTS\n?/gm, '')
   },
 
   gemini: {
     name: 'Gemini',
-    // .gemini/commands/{name}.toml
     commandsDir: '.gemini/commands',
     commandExt: '.toml',
-    // .gemini/skills/{name}/SKILL.md + references/
     skillsDir: '.gemini/skills',
-    commandFrontmatter: false, // TOML format, not YAML frontmatter
-    skillFrontmatter: true,
-    // .gemini/agents/{name}.md (experimental)
     agentsDir: '.gemini/agents',
-    agentFrontmatterFields: ['name', 'description', 'tools', 'model'],
+
+    fields: {
+      command: ['description'],
+      agent: ['name', 'description', 'tools', 'model'],
+      skill: null
+    },
+
+    formatOutput(frontmatter, body, contentType) {
+      if (contentType === 'command') {
+        return geminiCommandFormat(frontmatter, body);
+      }
+      return defaultFormat(frontmatter, body);
+    },
 
     placeholders: {
       '{{ask_instruction}}': 'Ask the user directly:',
@@ -111,22 +150,21 @@ const providers = {
       '{{agents_stat}}': agentsStat
     },
 
-    // Gemini uses {{args}} for argument substitution
     processArgs: (content) => content.replace(/\$ARGUMENTS/g, '{{args}}')
   },
 
   codex: {
     name: 'Codex',
-    // .codex/prompts/{name}.md
-    // Note: Codex prompts are typically global (~/.codex/prompts/)
-    // Users will need to copy to ~/.codex/prompts/ for global access
     commandsDir: '.codex/prompts',
     commandExt: '.md',
-    // .codex/skills/{name}/SKILL.md
     skillsDir: '.codex/skills',
-    commandFrontmatter: true,
-    skillFrontmatter: true,
-    frontmatterFields: ['description', 'argument-hint'],
+
+    fields: {
+      command: ['description', 'argument-hint'],
+      skill: null
+    },
+
+    formatOutput: defaultFormat,
 
     placeholders: {
       '{{ask_instruction}}': 'Ask the user directly:',
@@ -135,7 +173,6 @@ const providers = {
       '{{agents_stat}}': ''
     },
 
-    // Codex uses $ARGUMENTS natively — keep as-is
     processArgs: (content) => content
   }
 };

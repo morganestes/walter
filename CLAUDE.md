@@ -23,28 +23,23 @@ npm run clean           # Remove dist/
 ## Status
 
 - 1 skill, 9 commands, 6 agents, 12 references — all functional
-- Build system: 4 providers, placeholders, conditionals, auto-copy, ZIPs
+- Build system: 4 providers, unified transforms, validation, placeholders, conditionals, auto-copy, ZIPs
 - Site: Astro, OG image, SEO meta, sitemap, favicons, 404
 - Plugin: marketplace.json + plugin.json ready
 - Quality: lint + build pass clean, Husky pre-commit hooks enforced
 - CI: GitHub Actions on PR and push to main
 - Repo: README, DEVELOP.md, CONTRIBUTING.md, SECURITY.md, issue/PR templates — all in place
+- Deployed: walter.cooking live on Vercel, domain pointed, SSL active
 
 ## Known Issues
 
 - YAML parser doesn't strip quotes (latent — round-trip works)
-- No build transformation validation (output not verified beyond "it runs")
-- Provider abstraction leaks (TOML special case in build.js)
-- Duplicate transform functions in build.js (~80% shared logic)
-- Single-provider build doesn't clean stale output from other providers
 
 ## Next
 
-Deploy walter.cooking via Vercel, then first commit to GitHub.
+Content audit, frontmatter descriptions, Heisenberg evolution.
 
 ### Remaining Before Release
-
-- **Vercel deployment** — walter.cooking live, build command configured, domain pointed
 - **Content audit** — Walk every skill, command, agent, reference for tone, accuracy, completeness
 - **Frontmatter descriptions** — Audit all command and agent descriptions for clarity. These are what users and agents see first — clear and accurate, not gimmicky
 - **Heisenberg evolution** — Make write-capable, expand agent definition. Walter's subconscious — same thinking and discipline, can do real work (not just read-only advisory). Deep systems thinking + execution
@@ -53,7 +48,6 @@ Deploy walter.cooking via Vercel, then first commit to GitHub.
 
 **Developer Experience**
 - install.sh — Interactive installer (choose provider, target dir, global vs local)
-- Build validation — Verify transforms produce correct output, not just that they run
 
 **Extensions**
 - Hooks in SKILL.md frontmatter (Claude Code lifecycle events)
@@ -70,5 +64,7 @@ Deploy walter.cooking via Vercel, then first commit to GitHub.
 **The loop:** scope → break down → build → verify → hand off. Load Walter (`/walter`), define the problem (`/formula`), decompose it (`/prep`), build with discipline (`/cook`), verify against intent (`/purity`), seal context (`/stash`). Use `/probe` when you need research and `/trace` when something's broken. Every significant piece of work follows this loop — the ceremony scales with the stakes, but the thinking is always the same.
 
 **Making changes:** Edit `src/`, run `npm run build`, test with the relevant provider, run `npm run lint`. Husky catches lint and format issues at commit time. See [DEVELOP.md](DEVELOP.md) for architecture and source format.
+
+**Working docs:** `.walter/` is the scratch space for formulas, preps, reports, and other process artifacts. It's gitignored — use it for in-flight work without producing noise in the repo. Clean up when done.
 
 **Keeping docs current:** CLAUDE.md is the bootstrap — status, next action, where to look. Technical detail lives in [DEVELOP.md](DEVELOP.md). Contribution process lives in [CONTRIBUTING.md](CONTRIBUTING.md). If it doesn't help the next agent take their first action, it doesn't belong in CLAUDE.md.

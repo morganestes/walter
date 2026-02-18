@@ -5,8 +5,8 @@ node_modules/
 .astro/
 dist/
 
-# Deprecated
-.deprecated/
+# Walter
+.walter/
 
 # OS
 **/.DS_Store

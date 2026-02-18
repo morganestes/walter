@@ -21,6 +21,7 @@
 const fs = require('fs');
 const path = require('path');
 const { providers } = require('./lib/config');
+const { filterFrontmatter } = require('./lib/format');
 
 const { execSync } = require('child_process');
 
@@ -101,71 +102,6 @@ function parseYAML(yaml) {
   return result;
 }
 
-/**
- * Serialize frontmatter to YAML
- *
- * @param {Object} frontmatter
- * @returns {string}
- */
-function toYAML(frontmatter) {
-  let yaml = '';
-  for (const [key, value] of Object.entries(frontmatter)) {
-    if (Array.isArray(value)) {
-      yaml += `${key}:\n`;
-      for (const item of value) {
-        if (typeof item === 'object') {
-          const entries = Object.entries(item);
-          yaml += `  - ${entries[0][0]}: ${entries[0][1]}\n`;
-          for (let i = 1; i < entries.length; i++) {
-            yaml += `    ${entries[i][0]}: ${entries[i][1]}\n`;
-          }
-        } else {
-          yaml += `  - ${item}\n`;
-        }
-      }
-    } else {
-      yaml += `${key}: ${value}\n`;
-    }
-  }
-  return yaml.trimEnd();
-}
-
-/**
- * Convert command to Gemini TOML format
- *
- * @param {Object} frontmatter
- * @param {string} body
- * @returns {string}
- */
-function toGeminiTOML(frontmatter, body) {
-  const description = frontmatter.description || '';
-  // Escape quotes for TOML multiline string
-  const prompt = body.trim().replace(/"/g, '\\"');
-
-  return `description = "${description}"
-prompt = """
-${prompt}
-"""`;
-}
-
-/**
- * Filter frontmatter to only include provider-supported fields
- *
- * @param {Object} frontmatter - Parsed frontmatter object
- * @param {string[]} [allowedFields] - Whitelist of allowed field names. If not set, all fields pass through.
- * @returns {Object} Filtered frontmatter
- */
-function filterFrontmatter(frontmatter, allowedFields) {
-  if (!allowedFields || !frontmatter) return frontmatter;
-  const filtered = {};
-  for (const field of allowedFields) {
-    if (field in frontmatter) {
-      filtered[field] = frontmatter[field];
-    }
-  }
-  return filtered;
-}
-
 // -----------------------------------------------------------------------------
 // Content Transformation
 // -----------------------------------------------------------------------------
@@ -194,19 +130,23 @@ function processConditionals(content, provider) {
 }
 
 /**
- * Transform command content for a provider
+ * Transform content for a provider.
+ *
+ * Unified pipeline: parse frontmatter → replace placeholders → process
+ * conditionals → process args → filter frontmatter → format output.
+ * Content type and format differences are handled by provider config.
  *
  * @param {string} content - Raw file content
  * @param {string} provider - Provider key
+ * @param {string} contentType - 'command', 'agent', or 'skill'
  * @returns {string}
  */
-function transformCommand(content, provider) {
+function transform(content, provider, contentType) {
   const config = providers[provider];
   const { frontmatter, body: rawBody } = parseFrontmatter(content);
   let body = rawBody;
 
-  // Replace placeholders (must happen before processArgs to avoid
-  // accidentally replacing provider-specific arg syntax like Gemini's {{args}})
+  // Replace placeholders
   for (const [placeholder, replacement] of Object.entries(config.placeholders)) {
     body = body.split(placeholder).join(replacement);
   }
@@ -217,84 +157,12 @@ function transformCommand(content, provider) {
   // Process args syntax ($ARGUMENTS → provider-specific)
   body = config.processArgs(body);
 
-  // Gemini: pure TOML file
-  if (config.commandExt === '.toml') {
-    return toGeminiTOML(frontmatter, body);
-  }
+  // Filter frontmatter based on content type
+  const fields = config.fields[contentType];
+  const filtered = fields === false ? null : filterFrontmatter(frontmatter, fields);
 
-  // No frontmatter (Cursor)
-  if (!config.commandFrontmatter || !frontmatter) {
-    return body;
-  }
-
-  // Filter frontmatter to provider-supported fields
-  const filtered = filterFrontmatter(frontmatter, config.frontmatterFields);
-
-  // YAML frontmatter (Claude Code, Codex)
-  return `---\n${toYAML(filtered)}\n---\n${body}`;
-}
-
-/**
- * Transform agent content for a provider
- *
- * @param {string} content - Raw file content
- * @param {string} provider - Provider key
- * @returns {string}
- */
-function transformAgent(content, provider) {
-  const config = providers[provider];
-  const { frontmatter, body: rawBody } = parseFrontmatter(content);
-  let body = rawBody;
-
-  // Replace placeholders
-  for (const [placeholder, replacement] of Object.entries(config.placeholders)) {
-    body = body.split(placeholder).join(replacement);
-  }
-
-  // Process conditional blocks
-  body = processConditionals(body, provider);
-
-  // Process args syntax
-  body = config.processArgs(body);
-
-  // Filter frontmatter to provider-supported fields
-  const filtered = filterFrontmatter(frontmatter, config.agentFrontmatterFields);
-
-  if (!frontmatter) return body;
-
-  return `---\n${toYAML(filtered)}\n---\n${body}`;
-}
-
-/**
- * Transform skill content for a provider
- *
- * @param {string} content - Raw file content
- * @param {string} provider - Provider key
- * @returns {string}
- */
-function transformSkill(content, provider) {
-  const config = providers[provider];
-  const { frontmatter, body: rawBody } = parseFrontmatter(content);
-  let body = rawBody;
-
-  // Replace placeholders
-  for (const [placeholder, replacement] of Object.entries(config.placeholders)) {
-    body = body.split(placeholder).join(replacement);
-  }
-
-  // Process conditional blocks
-  body = processConditionals(body, provider);
-
-  // Process args syntax
-  body = config.processArgs(body);
-
-  // No frontmatter
-  if (!config.skillFrontmatter || !frontmatter) {
-    return body;
-  }
-
-  // YAML frontmatter
-  return `---\n${toYAML(frontmatter)}\n---\n${body}`;
+  // Format output (provider decides the format)
+  return config.formatOutput(filtered, body, contentType);
 }
 
 // -----------------------------------------------------------------------------
@@ -496,6 +364,13 @@ function buildProvider(provider) {
   // Output directly to dist/ (config paths already include .claude/, .cursor/, etc.)
   const providerDist = DIST;
 
+  // Clean provider's output directory to prevent stale files
+  const configDir = config.commandsDir.split('/')[0];
+  const configDirPath = path.join(DIST, configDir);
+  if (fs.existsSync(configDirPath)) {
+    fs.rmSync(configDirPath, { recursive: true });
+  }
+
   // Build commands
   const commandsSrc = path.join(SRC, 'commands');
   if (fs.existsSync(commandsSrc)) {
@@ -505,7 +380,7 @@ function buildProvider(provider) {
     const files = fs.readdirSync(commandsSrc).filter((f) => f.endsWith('.md'));
     for (const file of files) {
       const content = fs.readFileSync(path.join(commandsSrc, file), 'utf-8');
-      const transformed = transformCommand(content, provider);
+      const transformed = transform(content, provider, 'command');
       const outName = file.replace('.md', config.commandExt);
       fs.writeFileSync(path.join(commandsDest, outName), transformed);
     }
@@ -530,7 +405,7 @@ function buildProvider(provider) {
       const skillMd = path.join(skillSrcPath, 'SKILL.md');
       if (fs.existsSync(skillMd)) {
         const content = fs.readFileSync(skillMd, 'utf-8');
-        const transformed = transformSkill(content, provider);
+        const transformed = transform(content, provider, 'skill');
         fs.writeFileSync(path.join(skillDestPath, 'SKILL.md'), transformed);
       }
 
@@ -542,7 +417,7 @@ function buildProvider(provider) {
         const refs = fs.readdirSync(refsDir).filter((f) => f.endsWith('.md'));
         for (const ref of refs) {
           const refContent = fs.readFileSync(path.join(refsDir, ref), 'utf-8');
-          const transformed = transformSkill(refContent, provider);
+          const transformed = transform(refContent, provider, 'skill');
           fs.writeFileSync(path.join(refsDest, ref), transformed);
         }
       }
@@ -555,7 +430,7 @@ function buildProvider(provider) {
         const templates = fs.readdirSync(templatesDir).filter((f) => f.endsWith('.md'));
         for (const template of templates) {
           const templateContent = fs.readFileSync(path.join(templatesDir, template), 'utf-8');
-          const transformed = transformSkill(templateContent, provider);
+          const transformed = transform(templateContent, provider, 'skill');
           fs.writeFileSync(path.join(templatesDest, template), transformed);
         }
       }
@@ -573,7 +448,7 @@ function buildProvider(provider) {
       const files = fs.readdirSync(agentsSrc).filter((f) => f.endsWith('.md'));
       for (const file of files) {
         const content = fs.readFileSync(path.join(agentsSrc, file), 'utf-8');
-        const transformed = transformAgent(content, provider);
+        const transformed = transform(content, provider, 'agent');
         fs.writeFileSync(path.join(agentsDest, file), transformed);
       }
       console.log(`  ✓ Agents (${files.length})`);
@@ -608,6 +483,102 @@ function buildAll() {
 }
 
 // -----------------------------------------------------------------------------
+// Validation
+// -----------------------------------------------------------------------------
+
+/**
+ * Validate build output for structural correctness.
+ * Checks that each provider produced the expected directories, file counts,
+ * and file formats.
+ *
+ * @returns {string[]} Array of error messages (empty = valid)
+ */
+function validateOutput() {
+  const errors = [];
+
+  // Count source files
+  const srcCommands = path.join(SRC, 'commands');
+  const srcAgents = path.join(SRC, 'agents');
+  const srcSkills = path.join(SRC, 'skills');
+  const commandCount = fs.existsSync(srcCommands)
+    ? fs.readdirSync(srcCommands).filter((f) => f.endsWith('.md')).length
+    : 0;
+  const agentCount = fs.existsSync(srcAgents)
+    ? fs.readdirSync(srcAgents).filter((f) => f.endsWith('.md')).length
+    : 0;
+  const skillCount = fs.existsSync(srcSkills)
+    ? fs.readdirSync(srcSkills, { withFileTypes: true }).filter((d) => d.isDirectory()).length
+    : 0;
+
+  for (const [provider, config] of Object.entries(providers)) {
+    const configDir = config.commandsDir.split('/')[0];
+    const configDirPath = path.join(DIST, configDir);
+
+    // Provider directory exists
+    if (!fs.existsSync(configDirPath)) {
+      errors.push(`${provider}: missing output directory ${configDir}/`);
+      continue;
+    }
+
+    // Commands directory and count
+    const commandsPath = path.join(DIST, config.commandsDir);
+    if (!fs.existsSync(commandsPath)) {
+      errors.push(`${provider}: missing commands directory`);
+    } else {
+      const outFiles = fs.readdirSync(commandsPath).filter((f) => f.endsWith(config.commandExt));
+      if (outFiles.length !== commandCount) {
+        errors.push(`${provider}: expected ${commandCount} commands, got ${outFiles.length}`);
+      }
+
+      // Format check: TOML files should not start with ---, markdown with frontmatter should
+      for (const file of outFiles) {
+        const content = fs.readFileSync(path.join(commandsPath, file), 'utf-8');
+        if (config.commandExt === '.toml') {
+          if (content.startsWith('---')) {
+            errors.push(`${provider}: ${file} is TOML but starts with YAML frontmatter`);
+          }
+        }
+        const fields = config.fields.command;
+        if (fields !== false && config.commandExt !== '.toml' && !content.startsWith('---\n')) {
+          errors.push(`${provider}: ${file} should have frontmatter but doesn't`);
+        }
+        if (fields === false && content.startsWith('---\n')) {
+          errors.push(`${provider}: ${file} should not have frontmatter but does`);
+        }
+      }
+    }
+
+    // Skills directory and count
+    const skillsPath = path.join(DIST, config.skillsDir);
+    if (!fs.existsSync(skillsPath)) {
+      errors.push(`${provider}: missing skills directory`);
+    } else {
+      const outDirs = fs
+        .readdirSync(skillsPath, { withFileTypes: true })
+        .filter((d) => d.isDirectory());
+      if (outDirs.length !== skillCount) {
+        errors.push(`${provider}: expected ${skillCount} skills, got ${outDirs.length}`);
+      }
+    }
+
+    // Agents directory and count (if provider supports them)
+    if (config.agentsDir) {
+      const agentsPath = path.join(DIST, config.agentsDir);
+      if (!fs.existsSync(agentsPath)) {
+        errors.push(`${provider}: missing agents directory`);
+      } else {
+        const outFiles = fs.readdirSync(agentsPath).filter((f) => f.endsWith('.md'));
+        if (outFiles.length !== agentCount) {
+          errors.push(`${provider}: expected ${agentCount} agents, got ${outFiles.length}`);
+        }
+      }
+    }
+  }
+
+  return errors;
+}
+
+// -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
 
@@ -615,8 +586,30 @@ const args = process.argv.slice(2);
 
 if (args.length === 0) {
   buildAll();
+
+  console.log('Validating output...');
+  const errors = validateOutput();
+  if (errors.length > 0) {
+    console.error(`\n${errors.length} validation error(s):`);
+    for (const err of errors) {
+      console.error(`  ✗ ${err}`);
+    }
+    process.exit(1);
+  }
+  console.log('  ✓ All output valid\n');
 } else {
   for (const provider of args) {
     buildProvider(provider);
   }
+
+  console.log('\nValidating output...');
+  const errors = validateOutput();
+  if (errors.length > 0) {
+    console.error(`\n${errors.length} validation error(s):`);
+    for (const err of errors) {
+      console.error(`  ✗ ${err}`);
+    }
+    process.exit(1);
+  }
+  console.log('  ✓ All output valid');
 }
