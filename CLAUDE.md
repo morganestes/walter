@@ -65,6 +65,4 @@ Content audit, frontmatter descriptions, Heisenberg evolution.
 
 **Making changes:** Edit `src/`, run `npm run build`, test with the relevant provider, run `npm run lint`. Husky catches lint and format issues at commit time. See [DEVELOP.md](DEVELOP.md) for architecture and source format.
 
-**Working docs:** `.walter/` is the scratch space for formulas, preps, reports, and other process artifacts. It's gitignored — use it for in-flight work without producing noise in the repo. Clean up when done.
-
-**Keeping docs current:** CLAUDE.md is the bootstrap — status, next action, where to look. Technical detail lives in [DEVELOP.md](DEVELOP.md). Contribution process lives in [CONTRIBUTING.md](CONTRIBUTING.md). If it doesn't help the next agent take their first action, it doesn't belong in CLAUDE.md.
+**Keeping docs current:** CLAUDE.md is the bootstrap — status, next action, where to look. Technical detail lives in [DEVELOP.md](DEVELOP.md). Contribution process lives in [CONTRIBUTING.md](CONTRIBUTING.md). Focus on what helps the next agent take their first action.

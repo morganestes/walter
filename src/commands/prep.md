@@ -224,7 +224,7 @@ This is the breakdown. Now `/cook` has what it needs.
 
 ## Where to Capture
 
-Match ceremony to stakes — but always ask the user where they want the plan stored. Don't default to global config space or system plan files. The user's project, the user's call.
+Match ceremony to stakes. Don't default to global config space or system plan files — use `.walter/` or wherever the user specifies. The user's project, the user's call.
 
 | Project Size | Capture Method |
 | -------------- | ---------------- |
@@ -233,13 +233,13 @@ Match ceremony to stakes — but always ask the user where they want the plan st
 | Significant initiative | Scope doc with phases/features/work items |
 | Multi-phase project | Dedicated planning docs |
 
-Before writing anything to disk, ask: "Where do you want this?" Don't over-document. Don't under-document. Don't assume.
+Don't over-document. Don't under-document.
 
 ---
 
 ## Persist
 
-This breakdown exists only in conversation until saved. Before moving to `/cook`, ask where to persist it. The breakdown is what `/cook` executes against and what `/purity` verifies against — if it's not saved, downstream commands have nothing to reference.
+This breakdown exists only in conversation until saved. Before moving to `/cook`, offer to persist it. Default to `.walter/` if the user doesn't specify a location. The breakdown is what `/cook` executes against and what `/purity` verifies against — if it's not saved, downstream commands have nothing to reference.
 
 ---
 

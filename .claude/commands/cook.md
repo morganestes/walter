@@ -40,6 +40,7 @@ Before writing any code:
 - [ ] Success criteria are defined
 - [ ] Dependencies are identified and satisfied
 - [ ] Development environment is ready
+- [ ] Governing docs located (check `.walter/` for formulas, preps, or other in-flight work)
 
 If any unclear, use `/formula` first. Don't cook without a formula.
 

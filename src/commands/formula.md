@@ -167,9 +167,9 @@ This is the formula. Now you can cook.
 
 ## Persist
 
-This formula exists only in conversation. Before moving to `/prep` or `/cook`, ask: "Where do you want this saved?"
+Save the formula to `.walter/` by default. This is a governing document — `/cook` executes against it, `/purity` verifies against it. It needs to survive the session.
 
-Don't assume. Don't skip. If the user declines, that's their call — but name it: "This will be lost when the session ends or context compacts."
+If the formula is significant enough to share with the team or outlast the current work, ask about moving it to a permanent location. Don't skip this — a formula left in `.walter/` only survives as long as the directory does.
 
 ---
 

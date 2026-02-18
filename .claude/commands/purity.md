@@ -89,7 +89,7 @@ Verify the work meets criteria:
 
 ### Alignment Check
 
-Does the artifact match its governing spec?
+Does the artifact match its governing spec? Check `.walter/` for formulas, preps, or other in-flight docs that define the standard.
 
 1. What are you validating?
 2. Against what standard?
@@ -168,6 +168,12 @@ Don't filter findings based on what you think is important:
 **"Tests pass so we're good"** — Tests passing is necessary but not sufficient.
 
 **Verifying in main context** — Use sub-agents for checks. Don't waste tokens.
+
+---
+
+## Persist
+
+Verification reports exist only in conversation until saved. If the findings are significant — especially for work that will continue across sessions — offer to save them. Default to `.walter/` if the user doesn't specify a location.
 
 ---
 

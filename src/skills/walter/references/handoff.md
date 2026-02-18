@@ -38,7 +38,8 @@ Conversation context is ephemeral. Formulas, probe findings, decisions, and othe
 - Anything that took substantial effort to produce
 
 **Where to save:**
-- `docs/{topic}/` for project-specific work products
+- `.walter/` for in-flight work — gitignored, persists across sessions. On first write: create the directory if needed, ensure `.gitignore` covers it, and tell the user what `.walter/` is and that they can choose a different location
+- `docs/{topic}/` for permanent work products — committed, shared, the user decides when and where
 - Context log for session history
 - {{config_file}} for current status only — not full work products
 

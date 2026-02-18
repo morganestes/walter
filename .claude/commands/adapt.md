@@ -212,7 +212,7 @@ Changing approach without documenting why leaves future contributors confused. O
 
 ## Persist
 
-Scope changes, decisions, and pivot rationale exist only in conversation until saved. Ask: "Where do you want this documented?" Change records are how future contributors understand why things are the way they are. Don't move on without persisting.
+Scope changes, decisions, and pivot rationale exist only in conversation until saved. Default to `.walter/` if the user doesn't specify a location, but change records often warrant permanent storage — offer the choice. They're how future contributors understand why things are the way they are. Don't move on without persisting.
 
 ---
 

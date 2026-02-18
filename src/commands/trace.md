@@ -183,7 +183,7 @@ Discovery is `/trace`. Recovery and learning is `/vent`.
 
 ## Persist
 
-The root cause analysis exists only in conversation. For significant bugs — especially systemic ones — ask: "Want me to save the trace findings?" Root cause, fix rationale, and regression context are valuable for future debugging and postmortems.
+The root cause analysis exists only in conversation until saved. For significant bugs — especially systemic ones — offer to save the trace findings. Default to `.walter/` if the user doesn't specify a location. Root cause, fix rationale, and regression context are valuable for future debugging and postmortems.
 
 ---
 

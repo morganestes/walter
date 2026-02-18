@@ -43,7 +43,7 @@ Check the conversation for significant work products that exist only in context:
 - Root cause analyses
 - Anything that took substantial effort to produce
 
-**For each unpersisted item:** Ask the user: "This exists only in conversation. Want me to save it?" Don't assume. Don't skip. Don't batch them — name each one specifically.
+**For each unpersisted item:** Ask the user: "This exists only in conversation. Want me to save it?" Default to `.walter/` if they don't specify a location. Don't assume. Don't skip. Don't batch them — name each one specifically.
 
 ### 2. Assess Current State
 

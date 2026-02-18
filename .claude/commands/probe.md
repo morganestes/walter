@@ -164,7 +164,7 @@ When complete, you should have:
 
 ## Persist
 
-Probe findings exist only in conversation. If the probe produced significant insights — recommendation, evidence, trade-offs — ask: "Want me to save these findings?" They inform decisions that need rationale later.
+Probe findings exist only in conversation until saved. If the probe produced significant insights — recommendation, evidence, trade-offs — offer to save them. Default to `.walter/` if the user doesn't specify a location. They inform decisions that need rationale later.
 
 ---
 

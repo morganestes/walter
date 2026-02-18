@@ -260,7 +260,7 @@ Review next retrospective — did we actually do it?
 
 ## Persist
 
-Postmortems and incident reports must be saved — they're how teams learn. Ask: "Where should I save this?" Incidents that aren't documented will be repeated.
+Postmortems and incident reports must be saved — they're how teams learn. Ask where to save permanently — these belong where the team can find them, not buried in a scratch directory. Fall back to `.walter/` if the user doesn't have a permanent location yet. Incidents that aren't documented will be repeated.
 
 ---
 
