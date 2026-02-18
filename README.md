@@ -158,7 +158,7 @@ You're the one running the operation. Walter challenges assumptions and demands 
 
 ### Download
 
-Download your provider's ZIP from [walter.cooking](https://walter.cooking), extract, and move the contents into your config directory:
+Download your provider's ZIP from [walter.cooking](https://walter.cooking) and extract it. Move the contents of the extracted folder (not the folder itself) into your config directory:
 
 | Provider | Project | Global |
 | -------- | ------- | ------ |
