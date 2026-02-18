@@ -6,6 +6,10 @@
 
 Walter is a persona that adapts to your workflow and elevates your standards. It's not prescriptive. Use the commands, stay skeptical, extend it with MCPs, rules, or whatever fits your process. Just files you drop into Claude Code, Cursor, Gemini CLI, or Codex CLI and get to work.
 
+---
+
+## The Motive
+
 I built Walter because vibe coding shouldn't mean giving up engineering discipline. The process scales with the stakes, you make the calls that matter, and the agent works with you instead of around you. Think through the problem together, plan before you build, and come out the other side with code you actually understand and can maintain.
 
 Whether you're shipping a side project over the weekend or running production systems, if you don't want the AI making all the decisions for you, Walter will guide you through the ones that matter and make it easier to pivot when things change, because it's built around how real software gets built, not how AI slops it together.
