@@ -464,9 +464,7 @@ function buildProvider(provider) {
 function buildAll() {
   console.log('Walter Build System\n');
 
-  if (fs.existsSync(DIST)) {
-    fs.rmSync(DIST, { recursive: true });
-  }
+  ensureDir(DIST);
 
   for (const provider of Object.keys(providers)) {
     buildProvider(provider);
