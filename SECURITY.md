@@ -6,7 +6,7 @@ If you discover a security vulnerability in Walter, please report it responsibly
 
 **Do not open a public issue.**
 
-Instead, use [GitHub Security Advisories](https://github.com/derekherman/walter/security/advisories/new) to report the vulnerability privately, or email [derek@walter.cooking](mailto:derek@walter.cooking).
+Instead, use [GitHub Security Advisories](https://github.com/derekherman/walter/security/advisories/new) to report the vulnerability privately, or email [walter@derekherman.co](mailto:walter@derekherman.co).
 
 ## What to Include
 
