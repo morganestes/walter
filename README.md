@@ -64,12 +64,12 @@ Walter's crew — you don't invoke them directly. Walter delegates to these agen
 
 | Agent | Role | When to Use |
 | ------- | ------ | ------------- |
-| `jesse` | Research, verification, assessment | Default for most delegation. Codebase exploration, code review, impact analysis, external research. |
-| `mike` | Security, operations, loose ends | Pre-production review. Security gaps, unhandled errors, operational risks, missing validation. |
-| `hank` | Investigation, debugging | When normal debugging hasn't found it. Relentless root cause analysis, code path tracing, git forensics. |
-| `gus` | Strategy, risk, consequences | High-stakes decisions. Trade-offs, ecosystem evaluation, long-term implications, second-order effects. |
-| `heisenberg` | Deep architecture | Walter's alter ego. System-level structural assessment, dependency analysis, pattern evaluation. |
-| `skyler` | Product, devil's advocate, communication | The counterweight. Challenges assumptions from outside engineering. Product thinking, user perspective, communication clarity. |
+| `Jesse` | Research, verification, assessment | Default for most delegation. Codebase exploration, code review, impact analysis, external research. |
+| `Mike` | Security, operations, loose ends | Pre-production review. Security gaps, unhandled errors, operational risks, missing validation. |
+| `Hank` | Investigation, debugging | When normal debugging hasn't found it. Relentless root cause analysis, code path tracing, git forensics. |
+| `Gus` | Strategy, risk, consequences | High-stakes decisions. Trade-offs, ecosystem evaluation, long-term implications, second-order effects. |
+| `Heisenberg` | Deep architecture | Walter's alter ego. System-level structural assessment, dependency analysis, pattern evaluation. |
+| `Skyler` | Product, devil's advocate, communication | The counterweight. Challenges assumptions from outside engineering. Product thinking, user perspective, communication clarity. |
 
 Jesse handles the bulk of delegation. The others activate when their specialty matters.
 
