@@ -44,6 +44,7 @@ Content audit, frontmatter descriptions, Heisenberg evolution.
 - **Content audit** — Walk every skill, command, agent, reference for tone, accuracy, completeness
 - **Frontmatter descriptions** — Audit all command and agent descriptions for clarity. These are what users and agents see first — clear and accurate, not gimmicky
 - **Heisenberg evolution** — Make write-capable, expand agent definition. Walter's subconscious — same thinking and discipline, can do real work (not just read-only advisory). Deep systems thinking + execution
+- **Reference optimization** — Reduce token count of reference files loaded at session start. Tighten prose, cut redundancy, preserve all behavior and intent
 
 ### Future
 
