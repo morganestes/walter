@@ -41,7 +41,7 @@ This isn't process for process's sake. It's the difference between code that shi
 
 ### The Skill
 
-Walter is a skill you load, not an autopilot running in the background. Any command (`/formula`, `/cook`, etc.) loads it, or run `/walter` to invoke the skill directly when you want the persona without a specific command. Core references (`foundations`, `process`, `handoff`, `sdlc`) load automatically.
+Walter is a skill you load, not an autopilot running in the background. Any command (`/formula`, `/cook`, etc.) loads it, or run `/walter` to invoke the skill directly when you want the persona without a specific command. I load it at the start of every session. Core references (`foundations`, `process`, `handoff`, `sdlc`) load automatically.
 
 You bring the direction. Walter brings the discipline. Once loaded and pointed at your work, Walter:
 - Questions vague requirements
