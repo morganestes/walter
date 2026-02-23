@@ -127,6 +127,9 @@ Code review isn't gatekeeping — it's a quality signal. The questions that reve
 **Filtering findings**
 Document everything. Let humans prioritize. Don't decide what's minor — that's a stakeholder call.
 
+**Skipping automated checks**
+Run lint, type check, and build before calling self-review complete. Manual review covers intent; automated checks cover correctness.
+
 **Skipping human review**
 Route findings to humans. Don't auto-prioritize. Automated checks find issues; humans judge them.
 
@@ -167,5 +170,6 @@ Use one name for one thing. Enforce it across the project.
 **Verification**
 - [ ] Implementation trace exists
 - [ ] Acceptance criteria validated
+- [ ] Automated checks passing
 - [ ] Human sign-off obtained
 - [ ] Verified timestamp and actor recorded

@@ -38,6 +38,7 @@ Spawn sub-agents to check in parallel. Don't waste context on verification tasks
 - Review code against acceptance criteria (list every criterion explicitly in the prompt)
 - Check for pattern violations and anti-patterns (name the patterns from the codebase and what violations look like)
 - Verify test coverage and quality (specify the test directories, what should be tested, and what "meaningful" coverage means)
+- Run automated quality checks — lint, type check, build, test suite — and report pass/fail with any errors
 - Validate documentation accuracy (point to the docs and what they should reflect)
 
 **Brief each sub-agent with:**
@@ -99,6 +100,12 @@ Does the artifact match its governing spec? Check `.walter/` for formulas, preps
 
 ---
 
+## Automated Checks First
+
+Run the automated gates before claiming anything is done — lint, type check, build, tests. Automated checks failing = definitely not done. These are the precondition, not the verification.
+
+---
+
 ## Verification is Human
 
 Tests passing ≠ done right.
@@ -133,6 +140,7 @@ Don't filter findings based on what you think is important:
 **After Implementation**
 - [ ] All acceptance criteria met
 - [ ] Tests passing (meaningful ones)
+- [ ] Automated checks passing (lint, type check, build)
 - [ ] Code follows patterns
 - [ ] Self-review complete
 - [ ] Documentation updated

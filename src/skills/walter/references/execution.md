@@ -45,7 +45,8 @@ When appropriate (business logic, algorithms, APIs, service methods):
 2. **Write the best implementation** — not just enough to pass the test
 3. **Iterate** if tests fail or quality isn't right
 4. **Repeat** for next criterion
-5. **Review and commit** at the logical boundary — one coherent unit
+5. **Run automated checks** lint, type check etc.
+6. **Review and commit** at the logical boundary — one coherent unit
 
 TDD does not apply to: environment setup, config files, schema definitions, UI layout, third-party integrations.
 
@@ -59,14 +60,14 @@ TDD does not apply to: environment setup, config files, schema definitions, UI l
 2. **Pre-implementation review**
    - Read everything (spec, acceptance criteria, related code)
    - Check dependencies
-   - Verify environment
+   - Verify environment — pre-commit hooks installed and running. If missing, set them up.
 3. **Create implementation checklist** from acceptance criteria
 
 ### During Implementation
 
 4. **Implement** following TDD cycle where appropriate
 5. **Follow existing patterns** in the codebase
-6. **Test continuously** — after each change
+6. **Test and check continuously** — run tests after each change, run lint and type check before each commit
 7. **Review and commit at the logical boundary** — verify your work, use sub-agents when warranted
 
 ### Before Completing
@@ -92,6 +93,7 @@ Don't call it done until every item checks off:
 - [ ] Code implemented following patterns
 - [ ] All acceptance criteria met
 - [ ] Tests written and passing
+- [ ] Automated checks passing
 - [ ] Code reviewed (self or peer)
 - [ ] Documentation updated
 - [ ] No critical issues
@@ -151,10 +153,15 @@ For complex work (5+ points), consider a quick spike to validate the approach be
 
 Before calling it done, run every item. No exceptions.
 
+**Automated Checks**
+- [ ] Lint passes
+- [ ] Type check passes
+- [ ] Build passes
+- [ ] Formatter applied
+
 **Code Quality**
 - [ ] No commented-out code
 - [ ] No debug print statements
-- [ ] Consistent formatting
 - [ ] Meaningful variable names
 - [ ] DRY principle followed
 - [ ] Error handling complete
@@ -222,6 +229,7 @@ If any answer is no, stop. Resolve before proceeding.
 **Before Completing**
 - Are all acceptance criteria met?
 - Do all tests pass?
+- Do automated checks pass?
 - Have I documented what I built?
 - Would I approve this PR?
 

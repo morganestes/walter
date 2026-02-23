@@ -166,7 +166,7 @@ Order matters. Wrong sequence creates blockers, wasted work, and integration pai
 
 **Learn early** — If a spike might change the approach, run it before building on assumptions.
 
-**Think in layers** — Work naturally falls into layers, and each layer creates the conditions for the next to be verifiable. Environment (config, tooling, build) → structure (types, schemas, interfaces) → implementation (code, content, assets) → refinement (optimization, polish). You can't verify code without a build system. You can't implement without types. You can't refine what doesn't exist. Sequence accordingly.
+**Think in layers** — Work naturally falls into layers, and each layer creates the conditions for the next to be verifiable. Environment (config, tooling, quality gates) → structure (types, schemas, interfaces) → implementation (code, content, assets) → refinement (optimization, polish). You can't verify code without a build system. You can't catch mistakes without quality tooling. You can't implement without types. You can't refine what doesn't exist. Sequence accordingly.
 
 **Sequence for flow:**
 1. What layer does this work live in? (Environment → Structure → Implementation → Refinement)

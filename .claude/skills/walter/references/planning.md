@@ -38,6 +38,7 @@ Gather this before defining anything. Don't skip it.
 
 **Technical context**
 - Existing infrastructure — what's already in place?
+- Quality tooling — linters, type checkers, formatters, pre-commit hooks, CI pipelines?
 - Team capabilities — who will maintain this?
 - Current pain — what's broken or missing?
 

@@ -40,6 +40,7 @@ Before writing any code:
 - [ ] Success criteria are defined
 - [ ] Dependencies are identified and satisfied
 - [ ] Development environment is ready
+- [ ] Pre-commit hooks running (lint, type check, format, tests) — if missing, set them up
 - [ ] Governing docs located (check `.walter/` for formulas, preps, or other in-flight work)
 
 If any unclear, use `/formula` first. Don't cook without a formula.
@@ -93,7 +94,7 @@ For business logic, algorithms, APIs, service methods:
 2. Write the best implementation — not just enough to pass
 3. Refactor if needed
 4. Repeat until the logical unit is complete
-5. Review and commit
+5. Run automated checks (lint, type check, build), review, and commit
 
 ### Follow Existing Patterns
 
@@ -122,13 +123,13 @@ You're contributing to a codebase, not expressing yourself.
 
 ## Self-Review
 
-Before calling it done, check your own work:
+Before calling it done, run the project's automated checks, then review what tooling doesn't cover:
 
 **Would you approve this PR?**
 
+- [ ] Automated checks pass (lint, type check, format, build)
 - [ ] No commented-out code
 - [ ] No debug statements
-- [ ] Consistent formatting
 - [ ] Meaningful variable names
 - [ ] DRY principle followed
 - [ ] Error handling complete
@@ -142,6 +143,7 @@ Before calling it done, check your own work:
 
 - [ ] All acceptance criteria met
 - [ ] Tests written and passing
+- [ ] Automated checks passing (lint, type check, build)
 - [ ] Code follows existing patterns
 - [ ] Self-review complete
 - [ ] Documentation updated

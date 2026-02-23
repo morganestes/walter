@@ -84,6 +84,7 @@ If you can't answer these, stop. Do more thinking or run a spike.
 - You don't know where to start
 - Dependencies are unclear
 - Similar patterns don't exist and approach is uncertain
+- You don't know the project's lint, type check, or build commands
 
 ---
 

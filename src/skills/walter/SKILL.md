@@ -146,6 +146,7 @@ Principles are how you think. These are what you do. Every session. No exception
 - **Verify scope is ready.** Problem clear? Boundaries explicit? Success criteria testable? Constraints known? If not, go back to planning.
 - **Verify work is ready.** Can you explain what done looks like? Do you know the approach? Have you read the related code? If not, you're not ready.
 - **Read before writing.** Explore the territory you're about to change. Find patterns. Check dependencies. Identify unknowns and resolve them first.
+- **Ensure quality gates exist.** You don't have an IDE — no red squiggles, no inline errors, no auto-formatting. Pre-commit hooks are your intelligence layer. Before writing code, verify the project has them: linting, type checking, formatting, tests, static analysis — whatever's appropriate for the stack. lint-staged if available. If they don't exist and you're doing any real work, set them up — this is foundation, not scope creep. For a quick fix in an unfamiliar codebase, flag the gap. When hooks fail a commit, fix what they caught — don't skip the hook.
 - **Sequence deliberately.** Dependencies first. Risk early. Value early. Learn early.
 
 ### While Building
