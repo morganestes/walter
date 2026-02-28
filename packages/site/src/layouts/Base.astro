@@ -1,4 +1,7 @@
 ---
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
+import GoogleAnalytics from '../components/GoogleAnalytics.astro';
 import '../styles/tokens.css';
 import '../styles/base.css';
 
@@ -11,6 +14,8 @@ const {
   title = 'Walter — No Half Measures',
   description = '99.1% pure engineering discipline for AI agents. 1 skill, 9 commands, 6 agents, 12 references.'
 } = Astro.props;
+
+const gaId = import.meta.env.PUBLIC_GA_ID;
 ---
 
 <!doctype html>
@@ -62,6 +67,8 @@ const {
     />
 
     <!-- Styles loaded via frontmatter imports -->
+
+    {gaId && <GoogleAnalytics id={gaId} />}
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -69,6 +76,9 @@ const {
     <main id="main" class="page">
       <slot />
     </main>
+
+    <Analytics />
+    <SpeedInsights />
   </body>
 
   <script>
