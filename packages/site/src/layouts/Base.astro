@@ -82,6 +82,8 @@ const gaId = import.meta.env.PUBLIC_GA_ID;
   </body>
 
   <script>
+    import { trackEvent } from '../lib/analytics';
+
     const toggle = document.querySelector('.theme-toggle');
     const root = document.documentElement;
 
@@ -99,8 +101,17 @@ const gaId = import.meta.env.PUBLIC_GA_ID;
     }
 
     toggle?.addEventListener('click', () => {
-      const current = root.getAttribute('data-theme');
-      setTheme(current === 'dark' ? 'light' : 'dark');
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      setTheme(next);
+      trackEvent('theme_toggle', { theme: next });
+    });
+
+    // Global tracking for links with data-track attribute
+    document.addEventListener('click', (e) => {
+      const el = (e.target as HTMLElement).closest('[data-track]') as HTMLElement | null;
+      if (el?.dataset.track) {
+        trackEvent('link_click', { destination: el.dataset.track });
+      }
     });
   </script>
 </html>

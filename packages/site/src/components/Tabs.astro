@@ -196,9 +196,12 @@ const { providers } = Astro.props;
 </div>
 
 <script>
+  import { trackEvent } from '../lib/analytics';
+
   const panelsContainer = document.querySelector<HTMLElement>('.panels')!;
 
   function activateTab(tabName: string) {
+    trackEvent('tab_click', { tab: tabName });
     const startHeight = panelsContainer.offsetHeight;
 
     document.querySelectorAll('.tabs .tab').forEach((t) => {

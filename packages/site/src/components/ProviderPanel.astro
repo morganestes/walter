@@ -56,6 +56,8 @@ const hasTabs = p.methods.length > 1;
 </div>
 
 <script>
+  import { trackEvent } from '../lib/analytics';
+
   // Method pill switching
   document.querySelectorAll('.method-pills').forEach((pills) => {
     pills.addEventListener('click', (e) => {
@@ -63,8 +65,11 @@ const hasTabs = p.methods.length > 1;
       if (!pill) return;
 
       const idx = pill.dataset.method;
-      const panel = pills.closest('.provider-info');
+      const panel = pills.closest('.provider-info') as HTMLElement | null;
       if (!panel || !idx) return;
+
+      const provider = panel.dataset.provider ?? '';
+      trackEvent('method_select', { provider, method: pill.textContent?.trim() ?? '' });
 
       panel.querySelectorAll('.method-pill').forEach((p) => p.classList.remove('active'));
       panel.querySelectorAll('.method-content').forEach((c) => c.classList.remove('active'));
@@ -79,9 +84,12 @@ const hasTabs = p.methods.length > 1;
     btn.addEventListener('click', () => {
       const command = (btn as HTMLButtonElement).dataset.command;
       if (!command) return;
+      const provider =
+        (btn.closest('.provider-info') as HTMLElement | null)?.dataset.provider ?? '';
       navigator.clipboard
         .writeText(command)
         .then(() => {
+          trackEvent('copy_command', { provider });
           btn.textContent = 'Copied!';
           setTimeout(() => {
             btn.textContent = 'Copy';
@@ -93,6 +101,15 @@ const hasTabs = p.methods.length > 1;
             btn.textContent = 'Copy';
           }, 2000);
         });
+    });
+  });
+
+  // Download link
+  document.querySelectorAll('.provider-download').forEach((link) => {
+    link.addEventListener('click', () => {
+      const provider =
+        (link.closest('.provider-info') as HTMLElement | null)?.dataset.provider ?? '';
+      trackEvent('download', { provider });
     });
   });
 </script>
