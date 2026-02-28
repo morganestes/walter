@@ -4,20 +4,9 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   { ignores: ['**/dist/', '.astro/'] },
 
-  // Build scripts — CJS
+  // Build scripts
   {
-    files: ['packages/plugin/scripts/**/*.js'],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'commonjs',
-      globals: {
-        console: 'readonly',
-        process: 'readonly',
-        require: 'readonly',
-        module: 'readonly',
-        __dirname: 'readonly'
-      }
-    },
+    files: ['packages/plugin/scripts/**/*.js', 'packages/site/scripts/**/*.js'],
     rules: {
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-console': 'off',

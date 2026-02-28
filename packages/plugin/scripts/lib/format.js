@@ -53,4 +53,4 @@ function filterFrontmatter(frontmatter, allowedFields) {
   return filtered;
 }
 
-module.exports = { toYAML, filterFrontmatter };
+export { toYAML, filterFrontmatter };

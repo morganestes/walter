@@ -55,6 +55,9 @@
     "packages/plugin/scripts/**/*.js": [
       "eslint --fix"
     ],
+    "packages/site/scripts/**/*.js": [
+      "eslint --fix"
+    ],
     "packages/site/src/**/*.{ts,astro}": [
       "eslint --fix"
     ],

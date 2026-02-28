@@ -10,12 +10,12 @@
  * Usage: node scripts/optimize-bg.js [--force]
  */
 
-const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+import sharp from 'sharp';
+import path from 'path';
+import fs from 'fs';
 
-const INPUT = path.join(__dirname, '..', 'src', 'assets', 'desert.jpg');
-const OUTPUT_DIR = path.join(__dirname, '..', 'public', 'assets', 'bg');
+const INPUT = path.join(import.meta.dirname, '..', 'src', 'assets', 'desert.jpg');
+const OUTPUT_DIR = path.join(import.meta.dirname, '..', 'public', 'assets', 'bg');
 const force = process.argv.includes('--force');
 
 // CSS sepia(s) matrix: blend identity with sepia at amount s

@@ -18,15 +18,14 @@
  * @module build
  */
 
-const fs = require('fs');
-const path = require('path');
-const { providers } = require('./lib/config');
-const { filterFrontmatter } = require('./lib/format');
+import fs from 'fs';
+import path from 'path';
+import { providers } from './lib/config.js';
+import { filterFrontmatter } from './lib/format.js';
+import { execSync } from 'child_process';
 
-const { execSync } = require('child_process');
-
-const ROOT = path.resolve(__dirname, '..', '..', '..');
-const PKG = path.resolve(__dirname, '..');
+const ROOT = path.resolve(import.meta.dirname, '..', '..', '..');
+const PKG = path.resolve(import.meta.dirname, '..');
 const SRC = path.join(PKG, 'src');
 const DIST = path.join(PKG, 'dist');
 const LOCAL_CLAUDE = path.join(ROOT, '.claude');

@@ -13,13 +13,13 @@
  * @module config
  */
 
-const fs = require('fs');
-const path = require('path');
-const pkg = require('../../../../package.json');
-const { toYAML } = require('./format');
+import fs from 'fs';
+import path from 'path';
+import pkg from '../../../../package.json' with { type: 'json' };
+import { toYAML } from './format.js';
 
 // Count agents from source
-const agentsSrcDir = path.join(__dirname, '..', '..', 'src', 'agents');
+const agentsSrcDir = path.join(import.meta.dirname, '..', '..', 'src', 'agents');
 const agentCount = fs.existsSync(agentsSrcDir)
   ? fs.readdirSync(agentsSrcDir).filter((f) => f.endsWith('.md')).length
   : 0;
@@ -177,4 +177,4 @@ const providers = {
   }
 };
 
-module.exports = { providers };
+export { providers };

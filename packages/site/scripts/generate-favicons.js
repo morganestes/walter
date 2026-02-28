@@ -7,11 +7,11 @@
  * Usage: node scripts/generate-favicons.js [--force]
  */
 
-const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+import sharp from 'sharp';
+import path from 'path';
+import fs from 'fs';
 
-const OUTPUT_DIR = path.join(__dirname, '..', 'public');
+const OUTPUT_DIR = path.join(import.meta.dirname, '..', 'public');
 const force = process.argv.includes('--force');
 
 // Brand colors (dark mode — used for static PNG favicons)

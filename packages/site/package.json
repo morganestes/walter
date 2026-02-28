@@ -1,5 +1,6 @@
 {
   "name": "@walter/site",
+  "type": "module",
   "private": true,
   "scripts": {
     "build": "astro build",

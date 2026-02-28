@@ -13,11 +13,11 @@
  * Usage: node scripts/sync-version.js
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import pkg from '../../../package.json' with { type: 'json' };
 
-const ROOT = path.resolve(__dirname, '..', '..', '..');
-const pkg = require(path.join(ROOT, 'package.json'));
+const ROOT = path.resolve(import.meta.dirname, '..', '..', '..');
 const version = pkg.version;
 
 function syncJSON(filePath, accessor) {

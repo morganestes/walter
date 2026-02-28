@@ -10,11 +10,11 @@
  * Usage: node scripts/generate-banner.js
  */
 
-const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+import sharp from 'sharp';
+import path from 'path';
+import fs from 'fs';
 
-const PKG = path.join(__dirname, '..');
+const PKG = path.join(import.meta.dirname, '..');
 const SOURCE = path.join(PKG, 'dist', 'og.png');
 const OUTPUT = path.join(PKG, 'public', 'assets', 'banner.png');
 
