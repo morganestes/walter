@@ -5,12 +5,13 @@ An engineering persona for AI agents. Skill + command framework that teaches pri
 ## Commands
 
 ```bash
-npm run dev             # Astro dev server
-npm run build           # Full build: backgrounds → plugin → site
-npm run build:walter    # Plugin build only
+npm run dev             # Astro dev server (via @walter/site)
+npm run build           # Full chain: sync → optimize → plugin → copy → site → banner
+npm run build:plugin    # Plugin build only (via @walter/plugin)
+npm run build:site      # Astro site build (via @walter/site)
 npm run lint            # Lint all: markdownlint + ESLint + astro check
 npm run format          # Prettier
-npm run clean           # Remove dist/
+npm run clean           # Remove packages/*/dist/
 ```
 
 ## Docs
@@ -65,6 +66,6 @@ Content audit, frontmatter descriptions, Heisenberg evolution.
 
 **The loop:** scope → break down → build → verify → hand off. Load Walter (`/walter`), define the problem (`/formula`), decompose it (`/prep`), build with discipline (`/cook`), verify against intent (`/purity`), seal context (`/stash`). Use `/probe` when you need research and `/trace` when something's broken. Every significant piece of work follows this loop — the ceremony scales with the stakes, but the thinking is always the same.
 
-**Making changes:** Edit `src/`, run `npm run build`, test with the relevant provider, run `npm run lint`. Husky catches lint and format issues at commit time. See [DEVELOP.md](DEVELOP.md) for architecture and source format.
+**Making changes:** Edit `packages/`, run `npm run build`, test with the relevant provider, run `npm run lint`. Husky catches lint and format issues at commit time. See [DEVELOP.md](DEVELOP.md) for architecture and source format.
 
 **Keeping docs current:** CLAUDE.md is the bootstrap — status, next action, where to look. Technical detail lives in [DEVELOP.md](DEVELOP.md). Contribution process lives in [CONTRIBUTING.md](CONTRIBUTING.md). Focus on what helps the next agent take their first action.

@@ -19,7 +19,7 @@ See [DEVELOP.md](DEVELOP.md) for the full architecture, build system, and source
 
 ## Making Changes
 
-1. Edit files in `src/` — never edit `dist/` or `.claude/` directly
+1. Edit files in `packages/` — never edit `dist/` or `.claude/` directly
 2. Run `npm run build` to regenerate output
 3. Test with the relevant provider
 4. Run `npm run lint` to verify
@@ -32,9 +32,9 @@ Husky pre-commit hooks enforce lint and formatting automatically.
 
 | What | Where | Guide |
 | ---- | ----- | ----- |
-| Command | `src/commands/{name}.md` | [DEVELOP.md — Adding Content](DEVELOP.md#adding-content) |
-| Agent | `src/agents/{name}.md` | [DEVELOP.md — Adding Content](DEVELOP.md#adding-content) |
-| Reference | `src/skills/walter/references/{name}.md` | [DEVELOP.md — Adding Content](DEVELOP.md#adding-content) |
+| Command | `packages/plugin/src/commands/{name}.md` | [DEVELOP.md — Adding Content](DEVELOP.md#adding-content) |
+| Agent | `packages/plugin/src/agents/{name}.md` | [DEVELOP.md — Adding Content](DEVELOP.md#adding-content) |
+| Reference | `packages/plugin/src/skills/walter/references/{name}.md` | [DEVELOP.md — Adding Content](DEVELOP.md#adding-content) |
 
 ---
 
@@ -49,9 +49,9 @@ Husky pre-commit hooks enforce lint and formatting automatically.
 
 ## Code Style
 
-- **JavaScript** (scripts/): CommonJS, ESLint enforced
-- **TypeScript** (src/): Strict mode, ESLint + typescript-eslint
-- **Astro** (src/): eslint-plugin-astro
+- **JavaScript** (packages/plugin/scripts/): CommonJS, ESLint enforced
+- **TypeScript** (packages/site/src/): Strict mode, ESLint + typescript-eslint
+- **Astro** (packages/site/src/): eslint-plugin-astro
 - **Formatting**: Prettier for all file types
 - **Markdown**: markdownlint
 

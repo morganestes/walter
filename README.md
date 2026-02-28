@@ -1,4 +1,4 @@
-[![Banner Image](public/assets/banner.png)](https://walter.cooking)
+[![Banner Image](packages/site/public/assets/banner.png)](https://walter.cooking)
 
 # Walter
 
@@ -194,21 +194,7 @@ git clone https://github.com/derekherman/walter.git
 cd walter && npm install && npm run build
 ```
 
-Copy built files to your project or global config:
-
-```bash
-# Claude Code
-cp -r dist/.claude your-project/    # or ~/.claude/
-
-# Cursor
-cp -r dist/.cursor your-project/    # or ~/.cursor/
-
-# Gemini CLI
-cp -r dist/.gemini your-project/    # or ~/.gemini/
-
-# Codex CLI
-cp -r dist/.codex your-project/     # or ~/.codex/
-```
+Built output is in `packages/plugin/dist/` with one directory per provider. Copy the contents (commands/, skills/, agents/) into your config directory at either project or global level — see the [provider table](#download) for paths. Don't replace the config directory itself, as it may contain existing settings or plugins.
 
 ---
 

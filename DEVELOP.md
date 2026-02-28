@@ -19,118 +19,79 @@ npm install
 npm run build
 ```
 
-This generates provider-specific output in `dist/` and builds the website.
+This generates provider-specific output and builds the website.
 
 ---
 
 ## Source Structure
 
+The repo uses npm workspaces with two packages. Workspaces exist for monorepo merge compatibility — the plugin and site have no runtime dependencies on each other.
+
 ```
-src/
-├── agents/                 # Agent definitions (6 agents)
-│   ├── gus.md
-│   ├── hank.md
-│   ├── heisenberg.md
-│   ├── jesse.md
-│   ├── mike.md
-│   └── skyler.md
+packages/
+├── plugin/                 # @walter/plugin — skill, commands, agents, build system
+│   ├── src/
+│   │   ├── agents/         # Agent definitions (6 agents)
+│   │   ├── commands/       # Command definitions (9 commands)
+│   │   └── skills/walter/  # SKILL.md, references/, templates/
+│   ├── scripts/
+│   │   ├── build.js        # Plugin build system
+│   │   ├── sync-version.js # Syncs version to .claude-plugin/ manifests
+│   │   └── lib/            # config.js, format.js
+│   ├── dist/               # Build output (gitignored)
+│   └── package.json
 │
-├── commands/               # Command definitions (9 commands)
-│   ├── adapt.md
-│   ├── cook.md
-│   ├── formula.md
-│   ├── prep.md
-│   ├── probe.md
-│   ├── purity.md
-│   ├── stash.md
-│   ├── trace.md
-│   └── vent.md
-│
-├── skills/walter/          # The skill
-│   ├── SKILL.md            # Main skill file
-│   ├── references/         # Domain knowledge (12 references)
-│   │   ├── change.md
-│   │   ├── debugging.md
-│   │   ├── decomposition.md
-│   │   ├── execution.md
-│   │   ├── foundations.md
-│   │   ├── frontend-design.md
-│   │   ├── handoff.md
-│   │   ├── operations.md
-│   │   ├── planning.md
-│   │   ├── process.md
-│   │   ├── quality.md
-│   │   └── sdlc.md
-│   └── templates/          # Build-time templates
-│       └── intro.md
-│
-├── components/             # Astro site components
-│   ├── Chrome.astro
-│   ├── Credits.astro
-│   ├── Footer.astro
-│   ├── Logo.astro
-│   ├── ProviderPanel.astro
-│   ├── Tabs.astro
-│   └── Terminal.astro
-│
-├── data/                   # Site data
-│   ├── providers.ts        # Provider install configs
-│   └── site.ts             # Shared constants
-│
-├── layouts/
-│   └── Base.astro          # HTML shell, fonts, global styles
-│
-├── pages/
-│   ├── 404.astro           # Branded 404 page
-│   ├── index.astro         # Landing page
-│   └── og.png.ts           # OG image generation (build-time)
-│
-└── styles/
-    ├── base.css            # Reset, typography, utilities
-    └── tokens.css          # Design tokens
+└── site/                   # @walter/site — Astro marketing site
+    ├── src/
+    │   ├── components/     # *.astro components
+    │   ├── data/           # providers.ts, site.ts
+    │   ├── layouts/        # Base.astro
+    │   ├── pages/          # index.astro, 404.astro, og.png.ts
+    │   ├── styles/         # base.css, tokens.css
+    │   └── assets/         # desert.jpg
+    ├── scripts/
+    │   ├── optimize-bg.js  # Background image optimization
+    │   ├── generate-banner.js  # README banner from OG image
+    │   └── generate-favicons.js
+    ├── public/             # Static assets (favicons, robots.txt, downloads/)
+    ├── dist/               # Astro build output (gitignored)
+    ├── astro.config.mjs
+    ├── tsconfig.json       # Extends ../../tsconfig.base.json
+    └── package.json
 ```
 
 ## Generated Output
 
+Each package builds to its own `dist/`:
+
 ```
-dist/
+packages/plugin/dist/
 ├── .claude/                # Claude Code provider
-│   ├── agents/
-│   ├── commands/
-│   ├── skills/walter/
-│   └── .claude-plugin/     # Plugin manifest
-│
 ├── .cursor/                # Cursor provider
-│   ├── commands/
-│   └── skills/walter/
-│
 ├── .gemini/                # Gemini CLI provider
-│   ├── agents/
-│   ├── commands/           # TOML format
-│   └── skills/walter/
-│
 ├── .codex/                 # Codex CLI provider
-│   ├── prompts/            # Commands as prompts
-│   └── skills/walter/
-│
-└── site/                   # Astro website
+└── downloads/              # ZIP archives for website
+
+packages/site/dist/         # Astro website (Vercel serves from here)
 ```
 
-`dist/` is gitignored — always generated from source.
+Per-package `dist/` is gitignored — always generated from source.
 
 ---
 
 ## Scripts
 
+Root scripts orchestrate via `npm run <script> -w @walter/<pkg>`. Each package defines its own scripts in its `package.json`.
+
 ```bash
 # Development
-npm run dev                 # Astro dev server
+npm run dev                 # Astro dev server (delegates to @walter/site)
 npm run preview             # Preview built site
 
 # Build
-npm run build               # Full build: backgrounds → plugin → site
-npm run build:walter        # Plugin build only — all providers, local copy, ZIPs
-npm run build:site          # Astro site build → dist/site/
+npm run build               # Full chain: sync → optimize → plugin → copy → site → banner
+npm run build:plugin        # Plugin build only — all providers, local copy, ZIPs
+npm run build:site          # Astro site build → packages/site/dist/
 npm run build:claude        # Single provider build
 npm run build:cursor
 npm run build:gemini
@@ -138,10 +99,10 @@ npm run build:codex
 
 # Quality
 npm run lint                # All: markdownlint + ESLint + astro check
-npm run lint:md             # Markdown lint (src/ and root)
-npm run lint:js             # ESLint (scripts/ and src/)
-npm run lint:types          # Astro type checker
-npm run format              # Prettier (scripts/ and src/)
+npm run lint:md             # Markdown lint (plugin src/ and root docs)
+npm run lint:js             # ESLint (packages/)
+npm run lint:types          # Astro type checker (delegates to @walter/site)
+npm run format              # Prettier
 npm run format:check        # Prettier check (CI)
 
 # Assets
@@ -150,10 +111,12 @@ npm run generate:banner     # Crop OG image into README banner (needs site build
 npm run generate:favicons   # Generate favicon PNGs from SVG
 
 # Housekeeping
-npm run clean               # Remove dist/
+npm run clean               # Remove packages/*/dist/
 ```
 
-The `build` script chain: `optimize:bg` → `build:walter` → `build:site`.
+**Build chain:** `sync:version` → `optimize:bg` → `build:plugin` → `copy:downloads` → `build:site` → `generate:banner`
+
+The `copy:downloads` step copies ZIPs from `packages/plugin/dist/downloads/` to `packages/site/public/assets/downloads/`. This is the only cross-package data handoff — the plugin has no knowledge of the site.
 
 Single-provider builds (`build:claude`, etc.) skip local copy and ZIP generation.
 
@@ -161,7 +124,7 @@ Single-provider builds (`build:claude`, etc.) skip local copy and ZIP generation
 
 ## Build System
 
-The build system (`scripts/build.js`) transforms `src/` into provider-specific formats:
+The build system (`packages/plugin/scripts/build.js`) transforms plugin source into provider-specific formats:
 
 1. **Parse** YAML frontmatter from source markdown
 2. **Transform** placeholders (`{{config_file}}`, `{{version}}`, `{{ask_instruction}}`, `{{agents_stat}}`)
@@ -169,12 +132,12 @@ The build system (`scripts/build.js`) transforms `src/` into provider-specific f
 4. **Map arguments** (`$ARGUMENTS` → provider-specific syntax)
 5. **Filter frontmatter** per provider whitelist
 6. **Output** to provider-specific format and location
-7. **Copy** Claude output to `.claude/` for local development
-8. **ZIP** each provider's output into `public/assets/downloads/` for website distribution
+7. **Copy** Claude output to `.claude/` at repo root for local development
+8. **ZIP** each provider's output into `packages/plugin/dist/downloads/` (root copies to site during build)
 
 ### Provider Configurations
 
-Defined in `scripts/lib/config.js`:
+Defined in `packages/plugin/scripts/lib/config.js`:
 
 | Provider | Commands Dir | Extension | Agents | Arg Syntax | Config File |
 | -------- | ----------- | --------- | ------ | ---------- | ----------- |
@@ -196,7 +159,7 @@ Defined in `scripts/lib/config.js`:
 
 ## Source Format
 
-### Commands (`src/commands/*.md`)
+### Commands (`packages/plugin/src/commands/*.md`)
 
 ```yaml
 ---
@@ -209,7 +172,7 @@ Command prompt body. Use $ARGUMENTS for user input.
 Use {{config_file}} for provider-specific config reference.
 ```
 
-### Agents (`src/agents/*.md`)
+### Agents (`packages/plugin/src/agents/*.md`)
 
 ```yaml
 ---
@@ -224,7 +187,7 @@ Agent instructions and methodology.
 
 Agents output only to providers with agent support (Claude, Gemini).
 
-### Skills (`src/skills/*/SKILL.md`)
+### Skills (`packages/plugin/src/skills/*/SKILL.md`)
 
 ```yaml
 ---
@@ -236,11 +199,11 @@ Skill instructions. References in `references/` subdirectory.
 Templates in `templates/` subdirectory.
 ```
 
-### References (`src/skills/*/references/*.md`)
+### References (`packages/plugin/src/skills/*/references/*.md`)
 
 Plain markdown — no frontmatter. Loaded by commands when deeper context is needed.
 
-### Templates (`src/skills/*/templates/*.md`)
+### Templates (`packages/plugin/src/skills/*/templates/*.md`)
 
 Markdown with contextual placeholders that Walter fills at runtime. Processed through the same build pipeline as other files.
 
@@ -250,14 +213,14 @@ Markdown with contextual placeholders that Walter fills at runtime. Processed th
 
 ### New Command
 
-1. Create `src/commands/{name}.md` with YAML frontmatter
+1. Create `packages/plugin/src/commands/{name}.md` with YAML frontmatter
 2. Run `npm run build`
 3. Test with your provider
-4. Verify output in `dist/` for each provider format
+4. Verify output in `packages/plugin/dist/` for each provider format
 
 ### New Agent
 
-1. Create `src/agents/{name}.md` with YAML frontmatter (`name`, `description`, `tools`, `model`)
+1. Create `packages/plugin/src/agents/{name}.md` with YAML frontmatter (`name`, `description`, `tools`, `model`)
 2. Follow the shared template: identity, rules, methodology, output structure
 3. Include read-only rule: "You never write, edit, or delete files"
 4. Run `npm run build`
@@ -265,8 +228,8 @@ Markdown with contextual placeholders that Walter fills at runtime. Processed th
 
 ### New Reference
 
-1. Create `src/skills/walter/references/{name}.md`
-2. Reference it in `src/skills/walter/SKILL.md` command or reference table
+1. Create `packages/plugin/src/skills/walter/references/{name}.md`
+2. Reference it in `packages/plugin/src/skills/walter/SKILL.md` command or reference table
 3. Run `npm run build`
 
 ---
@@ -276,18 +239,18 @@ Markdown with contextual placeholders that Walter fills at runtime. Processed th
 ### Pre-commit Hooks
 
 Husky runs lint-staged on every commit:
-- **ESLint** on `scripts/**/*.js` and `src/**/*.{ts,astro}`
+- **ESLint** on `packages/plugin/scripts/**/*.js` and `packages/site/src/**/*.{ts,astro}`
 - **Prettier** on `*.{js,ts,astro,css,json}`
 
 Commits will be rejected if lint or formatting fails.
 
 ### Making Changes
 
-1. Edit files in `src/` (never edit `dist/` or `.claude/` directly)
+1. Edit files in `packages/` (never edit `dist/` or `.claude/` directly)
 2. Run `npm run build` to regenerate output
 3. Test with the relevant provider
 4. Run `npm run lint` to verify
-5. Commit source files only — `dist/` is gitignored
+5. Commit source files only — per-package `dist/` is gitignored
 
 ### Local Testing
 
