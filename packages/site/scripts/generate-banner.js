@@ -34,7 +34,7 @@ async function generate() {
     process.exit(1);
   }
 
-  await sharp(SOURCE).extract(CROP).png().toFile(OUTPUT);
+  await sharp(SOURCE).extract(CROP).png({ adaptiveFiltering: false }).toFile(OUTPUT);
 
   const stat = fs.statSync(OUTPUT);
   console.log(`  banner.png (${CROP.width}x${CROP.height}, ${stat.size} bytes)`);

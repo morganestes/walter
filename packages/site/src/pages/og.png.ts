@@ -53,10 +53,22 @@ async function renderLogo(): Promise<string> {
   return `data:image/png;base64,${png.toString('base64')}`;
 }
 
+// Seeded PRNG (mulberry32) for deterministic dither across builds
+function mulberry32(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 // Moonlight glow overlay — generated with float-precision dithering
 // Matches Background.astro dark mode:
 // radial-gradient(ellipse at 45% 33%, oklch(0.22 0.01 250/0.3), oklch(0.19 0.005 250/0.12) 35%, transparent 60%)
 function generateGlow(): Buffer {
+  const rand = mulberry32(0x57616c74);
   // Gradient stops: [offset, r, g, b, alpha]
   const stops: [number, number, number, number, number][] = [
     [0, 23, 27, 31, 76.5], // #171b1f @ 0.3
@@ -92,7 +104,7 @@ function generateGlow(): Buffer {
       const [rf, gf, bf, af] = sample(dist);
 
       // Triangular dither: ±0.5 LSB noise before quantization
-      const dither = (Math.random() + Math.random() - 1) * 0.5;
+      const dither = (rand() + rand() - 1) * 0.5;
       const offset = (y * W + x) * 4;
       data[offset] = Math.max(0, Math.min(255, Math.round(rf + dither)));
       data[offset + 1] = Math.max(0, Math.min(255, Math.round(gf + dither)));
