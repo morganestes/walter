@@ -1,0 +1,12 @@
+{
+  "name": "@walter/plugin",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "build:claude": "node scripts/build.js claude",
+    "build:cursor": "node scripts/build.js cursor",
+    "build:gemini": "node scripts/build.js gemini",
+    "build:codex": "node scripts/build.js codex",
+    "sync:version": "node scripts/sync-version.js"
+  }
+}

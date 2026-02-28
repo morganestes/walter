@@ -2,11 +2,11 @@ import eslintPluginAstro from 'eslint-plugin-astro';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist/', '.astro/'] },
+  { ignores: ['**/dist/', '.astro/'] },
 
   // Build scripts — CJS
   {
-    files: ['scripts/**/*.js'],
+    files: ['packages/plugin/scripts/**/*.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'commonjs',
@@ -28,7 +28,7 @@ export default tseslint.config(
 
   // Site source — TypeScript
   {
-    files: ['src/**/*.ts'],
+    files: ['packages/site/src/**/*.ts'],
     extends: tseslint.configs.recommended
   },
 

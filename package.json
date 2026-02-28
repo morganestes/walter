@@ -3,6 +3,7 @@
   "version": "1.0.0-beta",
   "description": "An engineering persona for AI agents. Adapts to your workflow, aims for 99.1% purity. No half measures.",
   "author": "Derek Herman <walter@derekherman.co>",
+  "type": "module",
   "license": "Apache-2.0",
   "homepage": "https://walter.cooking",
   "repository": {
@@ -12,6 +13,9 @@
   "bugs": {
     "url": "https://github.com/derekherman/walter/issues"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "keywords": [
     "claude",
     "cursor",
@@ -24,39 +28,40 @@
     "persona"
   ],
   "scripts": {
-    "dev": "astro dev",
-    "build": "npm run sync:version && npm run optimize:bg && npm run build:walter && npm run build:site && npm run generate:banner",
-    "build:walter": "node scripts/build.js",
-    "build:site": "astro build",
-    "build:claude": "node scripts/build.js claude",
-    "build:cursor": "node scripts/build.js cursor",
-    "build:gemini": "node scripts/build.js gemini",
-    "build:codex": "node scripts/build.js codex",
-    "preview": "astro preview",
-    "optimize:bg": "node scripts/optimize-bg.js",
-    "generate:banner": "node scripts/generate-banner.js",
-    "generate:favicons": "node scripts/generate-favicons.js",
-    "sync:version": "node scripts/sync-version.js",
-    "clean": "rm -rf dist",
+    "dev": "npm run dev -w @walter/site",
+    "build": "npm run sync:version && npm run optimize:bg && npm run build:plugin && npm run copy:downloads && npm run build:site && npm run generate:banner",
+    "build:plugin": "npm run build -w @walter/plugin",
+    "build:site": "npm run build -w @walter/site",
+    "build:claude": "npm run build:claude -w @walter/plugin",
+    "build:cursor": "npm run build:cursor -w @walter/plugin",
+    "build:gemini": "npm run build:gemini -w @walter/plugin",
+    "build:codex": "npm run build:codex -w @walter/plugin",
+    "preview": "npm run preview -w @walter/site",
+    "optimize:bg": "npm run optimize:bg -w @walter/site",
+    "generate:banner": "npm run generate:banner -w @walter/site",
+    "generate:favicons": "npm run generate:favicons -w @walter/site",
+    "sync:version": "npm run sync:version -w @walter/plugin",
+    "copy:downloads": "cp -r packages/plugin/dist/downloads/ packages/site/public/assets/downloads/",
+    "clean": "rm -rf packages/*/dist",
     "lint": "npm run lint:md && npm run lint:js && npm run lint:types",
-    "lint:md": "markdownlint 'src/**/*.md' '*.md'",
-    "lint:js": "eslint scripts/ src/",
-    "lint:types": "astro check",
-    "format": "prettier --write 'scripts/**/*.js' 'src/**/*.{ts,astro}'",
-    "format:check": "prettier --check 'scripts/**/*.js' 'src/**/*.{ts,astro}'",
+    "lint:md": "markdownlint 'packages/plugin/src/**/*.md' '*.md'",
+    "lint:js": "eslint packages/",
+    "lint:types": "npm run check -w @walter/site",
+    "format": "prettier --write 'packages/plugin/scripts/**/*.js' 'packages/site/src/**/*.{ts,astro}'",
+    "format:check": "prettier --check 'packages/plugin/scripts/**/*.js' 'packages/site/src/**/*.{ts,astro}'",
     "prepare": "husky"
   },
   "lint-staged": {
-    "scripts/**/*.js": [
+    "packages/plugin/scripts/**/*.js": [
       "eslint --fix"
     ],
-    "src/**/*.{ts,astro}": [
+    "packages/site/src/**/*.{ts,astro}": [
       "eslint --fix"
     ],
     "*.md": [
       "markdownlint"
     ],
-    "src/**/*.md": [
+    "packages/plugin/src/**/*.md": [
       "markdownlint"
     ],
     "*.{js,ts,astro,css,json}": [

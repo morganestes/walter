@@ -16,7 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
 const pkg = require(path.join(ROOT, 'package.json'));
 const version = pkg.version;
 

@@ -1,7 +1,7 @@
 /**
  * Generate a README banner by cropping the OG image.
  *
- * Source: dist/site/og.png (must run `npm run build:site` first)
+ * Source: dist/og.png (must run `npm run build:site` first)
  * Output: public/assets/banner.png
  *
  * Crops the OG image (1200x630) to focus on the terminal card,
@@ -14,9 +14,9 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 
-const ROOT = path.join(__dirname, '..');
-const SOURCE = path.join(ROOT, 'dist', 'site', 'og.png');
-const OUTPUT = path.join(ROOT, 'public', 'assets', 'banner.png');
+const PKG = path.join(__dirname, '..');
+const SOURCE = path.join(PKG, 'dist', 'og.png');
+const OUTPUT = path.join(PKG, 'public', 'assets', 'banner.png');
 
 // Crop region (from 1200x630 OG image)
 // Terminal card is 660px wide, centered at x=270..930

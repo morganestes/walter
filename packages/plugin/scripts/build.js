@@ -25,11 +25,12 @@ const { filterFrontmatter } = require('./lib/format');
 
 const { execSync } = require('child_process');
 
-const ROOT = path.resolve(__dirname, '..');
-const SRC = path.join(ROOT, 'src');
-const DIST = path.join(ROOT, 'dist');
+const ROOT = path.resolve(__dirname, '..', '..', '..');
+const PKG = path.resolve(__dirname, '..');
+const SRC = path.join(PKG, 'src');
+const DIST = path.join(PKG, 'dist');
 const LOCAL_CLAUDE = path.join(ROOT, '.claude');
-const PUBLIC_ASSETS = path.join(ROOT, 'public', 'assets', 'downloads');
+const DOWNLOADS = path.join(DIST, 'downloads');
 
 // -----------------------------------------------------------------------------
 // YAML Frontmatter Parsing
@@ -271,12 +272,12 @@ function copyToLocal() {
 /**
  * Create ZIP archives for each provider's distribution
  * Zips contain walter/ directory with commands/ and skills/ inside
- * Output to public/assets/downloads/ for website downloads
+ * Output to dist/downloads/ for root to copy to site
  */
 function createZips() {
   console.log('Creating ZIP archives...');
 
-  ensureDir(PUBLIC_ASSETS);
+  ensureDir(DOWNLOADS);
 
   let zipErrors = 0;
 
@@ -292,7 +293,7 @@ function createZips() {
     }
 
     // Create walter/ directory in public/assets for zipping
-    const walterDir = path.join(PUBLIC_ASSETS, 'walter');
+    const walterDir = path.join(DOWNLOADS, 'walter');
     if (fs.existsSync(walterDir)) {
       fs.rmSync(walterDir, { recursive: true });
     }
@@ -314,7 +315,7 @@ function createZips() {
     }
 
     const zipName = `walter-${provider}.zip`;
-    const zipPath = path.join(PUBLIC_ASSETS, zipName);
+    const zipPath = path.join(DOWNLOADS, zipName);
 
     // Remove existing zip
     if (fs.existsSync(zipPath)) {
@@ -324,7 +325,7 @@ function createZips() {
     // Create zip using system zip command
     try {
       execSync(`zip -rq "${zipName}" walter`, {
-        cwd: PUBLIC_ASSETS,
+        cwd: DOWNLOADS,
         stdio: 'pipe'
       });
       console.log(`  ✓ ${path.relative(ROOT, zipPath)}`);

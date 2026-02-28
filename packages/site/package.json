@@ -1,0 +1,13 @@
+{
+  "name": "@walter/site",
+  "private": true,
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev",
+    "preview": "astro preview",
+    "check": "astro check",
+    "optimize:bg": "node scripts/optimize-bg.js",
+    "generate:banner": "node scripts/generate-banner.js",
+    "generate:favicons": "node scripts/generate-favicons.js"
+  }
+}

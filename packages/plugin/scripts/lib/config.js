@@ -15,11 +15,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const pkg = require('../../package.json');
+const pkg = require('../../../../package.json');
 const { toYAML } = require('./format');
 
 // Count agents from source
-const agentsSrcDir = path.join(__dirname, '../../src/agents');
+const agentsSrcDir = path.join(__dirname, '..', '..', 'src', 'agents');
 const agentCount = fs.existsSync(agentsSrcDir)
   ? fs.readdirSync(agentsSrcDir).filter((f) => f.endsWith('.md')).length
   : 0;

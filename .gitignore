@@ -4,6 +4,7 @@ node_modules/
 # Generated
 .astro/
 dist/
+packages/*/dist/
 
 # Walter
 .walter/
@@ -32,5 +33,5 @@ npm-debug.log*
 .env.*.local
 
 # Built assets
-public/assets/bg/
-public/assets/downloads/
+packages/site/public/assets/bg/
+packages/site/public/assets/downloads/

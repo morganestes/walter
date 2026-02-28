@@ -4,6 +4,6 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://walter.cooking',
-  outDir: 'dist/site',
+  outDir: 'dist',
   integrations: [sitemap()],
 });
