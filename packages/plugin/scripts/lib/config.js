@@ -55,6 +55,49 @@ function geminiCommandFormat(frontmatter, body) {
   return `description = "${description}"\nprompt = """\n${prompt}\n"""`;
 }
 
+/**
+ * Processes agent frontmatter for Gemini CLI format.
+ *
+ * @link https://geminicli.com/docs/core/subagents/#configuration-schema
+ *
+ * @param {Object} frontmatter - The frontmatter object containing agent metadata.
+ * @param {string} body - The body content (not directly used in return).
+ * @returns {string} The formatted agent string.
+ */
+function geminiAgentFormat(frontmatter, body) {
+  const newFrontmatter = {
+    ...frontmatter,
+    tools: geminiToolsRemap(frontmatter),
+    name: frontmatter.name.toLowerCase(),
+    model: 'inherit'
+  };
+
+  return defaultFormat(newFrontmatter, body);
+}
+
+/**
+ * Remaps tool names from a comma-separated string to Gemini CLI compatible tool names.
+ *
+ * @param {{tools: string}} options - Object containing a `tools` property with
+ *   a comma-separated string of tool names (e.g., "Read, Write, WebSearch").
+ * @returns {string} A YAML-friendly array of remapped tool names.
+ */
+function geminiToolsRemap({ tools }) {
+  const toolMap = {
+    Read: 'read_file',
+    Glob: 'glob',
+    Grep: 'grep_search',
+    Bash: 'run_shell_command',
+    WebSearch: 'google_web_search',
+    WebFetch: 'web_fetch'
+  };
+
+  return tools
+    .split(/,\s*/)
+    .map((t) => toolMap[t] || t)
+    .map((item) => `${item.replace(/"/g, '')}`);
+}
+
 // -----------------------------------------------------------------------------
 // Provider Configurations
 // -----------------------------------------------------------------------------
@@ -137,10 +180,13 @@ const providers = {
     },
 
     formatOutput(frontmatter, body, contentType) {
-      if (contentType === 'command') {
-        return geminiCommandFormat(frontmatter, body);
-      }
-      return defaultFormat(frontmatter, body);
+      const formatters = {
+        command: geminiCommandFormat,
+        agent: geminiAgentFormat,
+        skill: defaultFormat
+      };
+
+      return formatters[contentType]?.(frontmatter, body);
     },
 
     placeholders: {
