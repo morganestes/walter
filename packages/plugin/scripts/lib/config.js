@@ -67,8 +67,9 @@ function geminiCommandFormat(frontmatter, body) {
 function geminiAgentFormat(frontmatter, body) {
   const newFrontmatter = {
     ...frontmatter,
+    name: `walter_${frontmatter.name.toLowerCase()}`,
+    display_name: frontmatter.name,
     tools: geminiToolsRemap(frontmatter),
-    name: frontmatter.name.toLowerCase(),
     model: 'inherit'
   };
 
@@ -175,7 +176,7 @@ const providers = {
 
     fields: {
       command: ['description'],
-      agent: ['name', 'description', 'tools', 'model'],
+      agent: ['name', 'display_name', 'description', 'tools', 'model'],
       skill: null
     },
 
