@@ -63,15 +63,38 @@ function geminiCommandFormat(frontmatter, body) {
  * @param {Object} frontmatter - The frontmatter object containing agent metadata.
  * @param {string} body - The body content (not directly used in return).
  * @returns {string} The formatted agent string.
+ * @throws {Error} If the `name` property is missing in the frontmatter.
  */
 function geminiAgentFormat(frontmatter, body) {
+  const { tools, name, model, kind = 'local' } = frontmatter;
+
+  if (!name || typeof name !== 'string') {
+    throw new Error('Agent frontmatter must include a "name" property as a string.');
+  }
+
   const newFrontmatter = {
     ...frontmatter,
-    name: `walter_${frontmatter.name.toLowerCase()}`,
-    display_name: frontmatter.name,
-    tools: geminiToolsRemap(frontmatter),
-    model: 'inherit'
+    display_name: name,
+    name: `walter_${name.replace(/\s/g, '_').toLowerCase()}`,
+    tools: geminiToolsRemap(tools),
+    model: geminiModelRemap(model),
+    kind
   };
+
+  // Remove properties that have no (or empty) value.
+  for (const key in newFrontmatter) {
+    if (Object.prototype.hasOwnProperty.call(newFrontmatter, key)) {
+      const value = newFrontmatter[key];
+      if (
+        value === null ||
+        value === undefined ||
+        value === '' ||
+        (Array.isArray(value) && value.length === 0)
+      ) {
+        delete newFrontmatter[key];
+      }
+    }
+  }
 
   return defaultFormat(newFrontmatter, body);
 }
@@ -79,11 +102,14 @@ function geminiAgentFormat(frontmatter, body) {
 /**
  * Remaps tool names from a comma-separated string to Gemini CLI compatible tool names.
  *
- * @param {{tools: string}} options - Object containing a `tools` property with
- *   a comma-separated string of tool names (e.g., "Read, Write, WebSearch").
- * @returns {string} A YAML-friendly array of remapped tool names.
+ * @param {string|undefined} tools - Comma-separated string of tool names (e.g., "Read, Write, WebSearch").
+ * @returns {string[]} An array of remapped tool names.
  */
-function geminiToolsRemap({ tools }) {
+function geminiToolsRemap(tools) {
+  if (!tools || typeof tools !== 'string') {
+    return [];
+  }
+
   const toolMap = {
     Read: 'read_file',
     Glob: 'glob',
@@ -96,7 +122,17 @@ function geminiToolsRemap({ tools }) {
   return tools
     .split(/,\s*/)
     .map((t) => toolMap[t] || t)
-    .map((item) => `${item.replace(/"/g, '')}`);
+    .filter(Boolean); // Remove any empty strings that might result from splitting.
+}
+
+/**
+ * Remaps model names for Gemini CLI.
+ *
+ * @param {string} [model] - The model name to remap. Defaults to an empty string.
+ * @returns {string} The remapped model name or the Gemini default 'inherit'.
+ */
+function geminiModelRemap(model = '') {
+  return model?.startsWith('gemini') ? model : 'inherit';
 }
 
 // -----------------------------------------------------------------------------
