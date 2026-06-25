@@ -49,7 +49,7 @@
     "lint:types": "npm run check -w @walter/site",
     "format": "prettier --write 'packages/plugin/scripts/**/*.js' 'packages/site/src/**/*.{ts,astro}'",
     "format:check": "prettier --check 'packages/plugin/scripts/**/*.js' 'packages/site/src/**/*.{ts,astro}'",
-    "prepare": "husky"
+    "prepare": "command -v husky >/dev/null && husky || true"
   },
   "lint-staged": {
     "packages/plugin/scripts/**/*.js": [
