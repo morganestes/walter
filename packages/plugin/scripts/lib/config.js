@@ -56,22 +56,21 @@ function geminiCommandFormat(frontmatter, body) {
 }
 
 /**
- * Processes agent frontmatter for Gemini CLI format.
- *
- * @link https://geminicli.com/docs/core/subagents/#configuration-schema
- *
- * @param {Object} frontmatter - The frontmatter object containing agent metadata.
- * @param {string} body - The body content (not directly used in return).
- * @returns {string} The formatted agent string.
- * @throws {Error} If the `name` property is missing in the frontmatter.
- */
+  * Processes agent frontmatter for Gemini CLI format.
+  *
+  * @link https://geminicli.com/docs/core/subagents/#configuration-schema
+  *
+  * @param {Object} frontmatter - The frontmatter object containing agent metadata.
+  * @param {string} body - The body content (not directly used in return).
+  * @returns {string} The formatted agent string.
+  * @throws {Error} If required properties are missing in the frontmatter or validation fails.
+  */
 function geminiAgentFormat(frontmatter, body) {
+  // Bail early if required fields are missing.
+  // This throws an error instead of returning a value.
+  geminiCheckRequiredFields(frontmatter);
+
   const { tools, name, model, kind = 'local' } = frontmatter;
-
-  if (!name || typeof name !== 'string') {
-    throw new Error('Agent frontmatter must include a "name" property as a string.');
-  }
-
   const newFrontmatter = {
     ...frontmatter,
     display_name: name,
@@ -81,22 +80,28 @@ function geminiAgentFormat(frontmatter, body) {
     kind
   };
 
-  // Remove properties that have no (or empty) value.
-  for (const key in newFrontmatter) {
-    if (Object.prototype.hasOwnProperty.call(newFrontmatter, key)) {
-      const value = newFrontmatter[key];
-      if (
-        value === null ||
-        value === undefined ||
-        value === '' ||
-        (Array.isArray(value) && value.length === 0)
-      ) {
-        delete newFrontmatter[key];
+  // Filter out properties with no value to avoid errors with the agent.
+  const cleanedFrontmatter = Object.fromEntries(
+    Object.entries(newFrontmatter).filter(
+      ([, value]) => {
+        return value !== null
+          && value !== ''
+          && (!Array.isArray(value) || value.length !== 0)
       }
-    }
+    )
+  );
+
+  // Validate the final agent configuration.
+  const validationErrors = validateGeminiAgent(cleanedFrontmatter);
+  if (validationErrors.length > 0) {
+    const errorDetails = validationErrors.join('\n- ');
+    throw new Error(`
+      Gemini agent validation failed for "${cleanedFrontmatter.name || name}":
+        ${errorDetails}
+      `);
   }
 
-  return defaultFormat(newFrontmatter, body);
+  return defaultFormat(cleanedFrontmatter, body);
 }
 
 /**
@@ -133,6 +138,87 @@ function geminiToolsRemap(tools) {
  */
 function geminiModelRemap(model = '') {
   return model?.startsWith('gemini') ? model : 'inherit';
+}
+
+function geminiCheckRequiredFields(frontmatter) {
+  console.log({ frontmatter });
+  const requiredFields = ['name', 'description'];
+
+  for (const field of requiredFields) {
+    if (!Object.hasOwn(frontmatter, field) || typeof frontmatter[field] !== 'string') {
+      throw new Error(`"${field}" is a required Agent field.`);
+    }
+  }
+}
+
+/**
+  * Validates a Gemini agent configuration object against the official schema.
+  *
+  * @see {@link https://geminicli.com/docs/core/subagents/#configuration-schema}
+  *
+  * @param {object} agentConfig - The agent configuration object to validate.
+  * @returns {string[]} An array of error messages. The array is empty if the configuration is valid.
+  */
+function validateGeminiAgent(agentConfig) {
+  const errors = [];
+
+  // Required fields
+  if (!agentConfig.name || typeof agentConfig.name !== 'string') {
+    errors.push('`name` is required and must be a string.');
+  } else if (!/^[a-z0-9_-]+$/.test(agentConfig.name)) {
+    // Name format
+    errors.push('`name` must contain only lowercase letters, numbers, hyphens, and underscores.');
+  }
+
+  if (!agentConfig.description || typeof agentConfig.description !== 'string') {
+    errors.push('`description` is required and must be a string.');
+  }
+
+  // Optional fields type, value, and range validation
+  if (agentConfig.kind && !['local', 'remote'].includes(agentConfig.kind)) {
+    errors.push('`kind` must be either "local" or "remote".');
+  }
+
+  if (agentConfig.tools &&
+    (
+      !Array.isArray(agentConfig.tools) ||
+      !agentConfig.tools.every((t) => typeof t === 'string')
+    )
+  ) {
+    errors.push('`tools` must be an array of strings.');
+  }
+
+  if (agentConfig.mcpServers &&
+    (
+      typeof agentConfig.mcpServers !== 'object' ||
+      Array.isArray(agentConfig.mcpServers) ||
+      agentConfig.mcpServers === null
+    )
+  ) {
+    errors.push('`mcpServers` must be an object.');
+  }
+
+  if (agentConfig.model && typeof agentConfig.model !== 'string') {
+    errors.push('`model` must be a string.');
+  }
+
+  if (agentConfig.temperature !== undefined) {
+    if (typeof agentConfig.temperature !== 'number') {
+      errors.push('`temperature` must be a number.');
+    } else if (agentConfig.temperature < 0.0 || agentConfig.temperature > 2.0) {
+      errors.push('`temperature` must be between 0.0 and 2.0.');
+    }
+  }
+
+  if (agentConfig.max_turns !== undefined && typeof agentConfig.max_turns !== 'number') {
+    errors.push('`max_turns` must be a number.');
+  }
+
+  if (agentConfig.timeout_mins !== undefined && typeof agentConfig.timeout_mins !== 'number') {
+    errors.push('`timeout_mins` must be a number.');
+  }
+
+  return errors;
 }
 
 // -----------------------------------------------------------------------------
