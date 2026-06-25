@@ -18,11 +18,11 @@
  * @module build
  */
 
+import archiver from 'archiver';
 import fs from 'fs';
 import path from 'path';
 import { providers } from './lib/config.js';
 import { filterFrontmatter } from './lib/format.js';
-import { execSync } from 'child_process';
 
 const ROOT = path.resolve(import.meta.dirname, '..', '..', '..');
 const PKG = path.resolve(import.meta.dirname, '..');
@@ -253,7 +253,6 @@ function copyToLocal() {
   }
 
   // Copy from dist
-
   if (fs.existsSync(distCommands)) {
     copyDir(distCommands, localCommands);
   }
@@ -274,36 +273,31 @@ function copyToLocal() {
  * Zips contain walter/ directory with commands/ and skills/ inside
  * Output to dist/downloads/ for root to copy to site
  */
-function createZips() {
+async function createZips() {
   console.log('Creating ZIP archives...');
 
   ensureDir(DOWNLOADS);
 
-  let zipErrors = 0;
-
-  for (const provider of Object.keys(providers)) {
+  const zipPromises = Object.keys(providers).map(async (provider) => {
     const config = providers[provider];
-
-    // Config directory is now directly in dist (e.g., dist/.claude/)
     const configDir = config.commandsDir.split('/')[0];
     const configDirPath = path.join(DIST, configDir);
 
     if (!fs.existsSync(configDirPath)) {
-      continue;
+      return; // Skip if provider was not built
     }
 
-    // Create walter/ directory in public/assets for zipping
-    const walterDir = path.join(DOWNLOADS, 'walter');
+    const walterDir = path.join(DOWNLOADS, `walter-${provider}-temp`);
     if (fs.existsSync(walterDir)) {
       fs.rmSync(walterDir, { recursive: true });
     }
     ensureDir(walterDir);
 
-    // Copy commands, skills, and agents into walter/
     const commandsSubdir = config.commandsDir.split('/').slice(1).join('/') || 'commands';
     const srcCommands = path.join(configDirPath, commandsSubdir);
     const srcSkills = path.join(configDirPath, 'skills');
     const srcAgents = path.join(configDirPath, 'agents');
+
     if (fs.existsSync(srcCommands)) {
       copyDir(srcCommands, path.join(walterDir, commandsSubdir));
     }
@@ -316,37 +310,43 @@ function createZips() {
 
     const zipName = `walter-${provider}.zip`;
     const zipPath = path.join(DOWNLOADS, zipName);
-
-    // Remove existing zip
     if (fs.existsSync(zipPath)) {
       fs.unlinkSync(zipPath);
     }
 
-    // Create zip using system zip command
-    try {
-      execSync(`zip -rq -x "test-*" -- "${zipName}" walter`, {
-        cwd: DOWNLOADS,
-        stdio: 'pipe'
+    const output = fs.createWriteStream(zipPath);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    return new Promise((resolve, reject) => {
+      output.on('close', () => {
+        console.log(`  ✓ ${path.relative(ROOT, zipPath)} (${archive.pointer()} bytes)`);
+        fs.rmSync(walterDir, { recursive: true }); // Clean up temp dir
+        resolve();
       });
-      console.log(`  ✓ ${path.relative(ROOT, zipPath)}`);
-    } catch (err) {
-      console.error(`  ✗ Failed to create ${zipName}: ${err.message}`);
-      zipErrors++;
-    }
 
-    // Clean up temporary walter/ directory
-    fs.rmSync(walterDir, { recursive: true });
-  }
+      archive.on('warning', (err) => {
+        console.warn(`  ! Warning for ${zipName}: ${err.message}`);
+      });
 
-  if (zipErrors > 0) {
-    console.error(`\n${zipErrors} ZIP archive(s) failed to create.`);
+      archive.on('error', (err) => {
+        console.error(`  ✗ Failed to create ${zipName}: ${err.message}`);
+        fs.rmSync(walterDir, { recursive: true }); // Clean up temp dir
+        reject(err);
+      });
+
+      archive.pipe(output);
+      archive.directory(walterDir, 'walter');
+      archive.finalize();
+    });
+  });
+
+  try {
+    await Promise.all(zipPromises);
+  } catch (err) {
+    console.error(`ZIP archive creation failed: ${err.message}`);
     process.exit(1);
   }
 }
-
-// -----------------------------------------------------------------------------
-// Build
-// -----------------------------------------------------------------------------
 
 /**
  * Build output for a specific provider
@@ -462,21 +462,18 @@ function buildProvider(provider) {
 /**
  * Build output for all providers
  */
-function buildAll() {
-  console.log('Walter Build System\n');
+async function buildAll() {
+  console.log('Walter Build System');
 
   ensureDir(DIST);
 
   for (const provider of Object.keys(providers)) {
     buildProvider(provider);
-    console.log();
   }
 
   copyToLocal();
-  console.log();
 
-  createZips();
-  console.log();
+  await createZips();
 
   console.log('Done.');
 }
@@ -586,36 +583,38 @@ function validateOutput(providersToValidate) {
 // Main
 // -----------------------------------------------------------------------------
 
-const args = process.argv.slice(2);
+(async () => {
+  const args = process.argv.slice(2);
 
-if (args.length === 0) {
-  buildAll();
+  if (args.length === 0) {
+    await buildAll();
 
-  console.log('Validating output...');
-  const providersToValidate = Object.keys(providers);
-  const errors = validateOutput(providersToValidate);
-  if (errors.length > 0) {
-    console.error(`\n${errors.length} validation error(s):`);
-    for (const err of errors) {
-      console.error(`  ✗ ${err}`);
+    console.log('Validating output...');
+    const providersToValidate = Object.keys(providers);
+    const errors = validateOutput(providersToValidate);
+    if (errors.length > 0) {
+      console.error(`${errors.length} validation error(s):`);
+      for (const err of errors) {
+        console.error(`  ✗ ${err}`);
+      }
+      process.exit(1);
     }
-    process.exit(1);
-  }
-  console.log('  ✓ All output valid\n');
-} else {
-  for (const provider of args) {
-    buildProvider(provider);
-  }
-
-  console.log('\nValidating output...');
-  const providersToValidate = args;
-  const errors = validateOutput(providersToValidate);
-  if (errors.length > 0) {
-    console.error(`\n${errors.length} validation error(s):`);
-    for (const err of errors) {
-      console.error(`  ✗ ${err}`);
+    console.log('  ✓ All output valid');
+  } else {
+    for (const provider of args) {
+      buildProvider(provider);
     }
-    process.exit(1);
+
+    console.log('Validating output...');
+    const providersToValidate = args;
+    const errors = validateOutput(providersToValidate);
+    if (errors.length > 0) {
+      console.error(`${errors.length} validation error(s):`);
+      for (const err of errors) {
+        console.error(`  ✗ ${err}`);
+      }
+      process.exit(1);
+    }
+    console.log('  ✓ All output valid');
   }
-  console.log('  ✓ All output valid');
-}
+})();
