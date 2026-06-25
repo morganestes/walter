@@ -186,6 +186,7 @@ function copyDir(src, dest) {
   const entries = fs.readdirSync(src, { withFileTypes: true });
 
   for (const entry of entries) {
+    console.debug(entry.name);
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
 
@@ -323,7 +324,7 @@ function createZips() {
 
     // Create zip using system zip command
     try {
-      execSync(`zip -rq "${zipName}" walter`, {
+      execSync(`zip -rq -x "test-*" -- "${zipName}" walter`, {
         cwd: DOWNLOADS,
         stdio: 'pipe'
       });
@@ -491,7 +492,7 @@ function buildAll() {
  *
  * @returns {string[]} Array of error messages (empty = valid)
  */
-function validateOutput() {
+function validateOutput(providersToValidate) {
   const errors = [];
 
   // Count source files
@@ -508,7 +509,12 @@ function validateOutput() {
     ? fs.readdirSync(srcSkills, { withFileTypes: true }).filter((d) => d.isDirectory()).length
     : 0;
 
-  for (const [provider, config] of Object.entries(providers)) {
+  for (const provider of providersToValidate) {
+    const config = providers[provider];
+    if (!config) {
+      errors.push(`config: unknown provider '${provider}'`);
+      continue;
+    }
     const configDir = config.commandsDir.split('/')[0];
     const configDirPath = path.join(DIST, configDir);
 
@@ -586,7 +592,8 @@ if (args.length === 0) {
   buildAll();
 
   console.log('Validating output...');
-  const errors = validateOutput();
+  const providersToValidate = Object.keys(providers);
+  const errors = validateOutput(providersToValidate);
   if (errors.length > 0) {
     console.error(`\n${errors.length} validation error(s):`);
     for (const err of errors) {
@@ -601,7 +608,8 @@ if (args.length === 0) {
   }
 
   console.log('\nValidating output...');
-  const errors = validateOutput();
+  const providersToValidate = args;
+  const errors = validateOutput(providersToValidate);
   if (errors.length > 0) {
     console.error(`\n${errors.length} validation error(s):`);
     for (const err of errors) {
